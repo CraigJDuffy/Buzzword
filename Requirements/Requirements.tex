@@ -1,0 +1,63 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{enumitem} %Used for modifing the labels used for items in lists.
+\usepackage{hyperref} %Used for hyperlinks to reference materials, and section referencing.
+\usepackage{tabulary} %used for tables.
+\usepackage{booktabs} %Used for nicer table formatting eg midrule
+
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Subsection} % Reassigning the default names to have capitals.
+
+%The command gives hyperlinked referencings in the form Section #: SectionTitle
+\newcommand{\gref}[1]{\hyperref[#1]{\autoref*{#1}: \nameref{#1}}} % Good referencing = gref
+
+\begin{document}
+
+\section{Introduction} \label{sec:Intro}
+
+This document outlines the requirements, scope, and boundaries placed upon the project based on an interpretation of the document \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Year 3 Group Project Specification - Restaurant Ordering System"}
+
+\subsection{Purpose of project} \label{subec:purpose}
+
+The purpose of this project is to develop a system to support restaurant staff in taking and fulfilling food orders from customers. The system is intended to make the process of relaying orders to the kitchen more efficient, whilst increasing the information available to customers regarding their order. The aim is to allow servers to take quickly take complex orders from a customer or group of customers and have this automatically relayed to kitchen staff. The kitchen staff will then be able to provide certain feedback on the order, such as estimated time to delivery, which will be viewable by customers through this system.
+
+\subsection{Scope} \label{subsec:Scope}
+
+The restaurant ordering system (henceforth "The system") will be implemented as a web-based application, however it will not be designed for operation over the internet. While it makes use of standard web technologies that could be used in such a manner, none of the required security measures will be implemented. As such use of the system will be limited to client devices connected to the restaurant's wireless Local Area Network (LAN).\\
+\\
+The system shall consist of 5 distinct software components:
+\begin{enumerate}
+\item A Kitchen component to display information on current, unfulfilled orders to kitchen staff. The component will also be responsible for processing input to the system from the kitchen staff.
+\item A Waiting component to allow serving staff to enter, view, and amend customers' orders into the system.
+\item A Customer component allowing customers to view the current status of their order. Any other direct interaction between the system and any customer (IE not through a member of staff) will be the responsibility of this component.
+\item A Database component responsible for storing any persistent information required by the system. For example all current unfulfilled orders, the restaurant's menu, and the availability of items on it. These examples will not necessarily be required by or implemented in the system.
+\item A Server component which will manage the flow of information between the four previously mentioned components.
+\end{enumerate} 
+\noindent
+No aspect of the system will process payments from customers, though price information about items on the menu may be represented in the system. The system will also not be designed to integrate with any other technologies the restaurant may be using, for example Point of Sale or Stock Control systems.\\
+\\
+The server, server component, and database component will be designed to handle traffic commensurate with the number of customers served by the restaurant currently, with accommodation for future increases.
+
+\subsection{Assumptions} \label{subsec:Assumptions}
+
+It is assumed that the restaurant is capable of implementing and maintaining a reliable wireless Local Area Network.\\
+It is further assumed that the restaurant has or will have an active wireless Local Area Network implemented for the installation of this system.\\
+\\
+It is assumed that the restaurant has or will have the ability to maintain the server hardware and software - where said software has not been implemented as part of this project - by the end of this project. This may or may not be through a Service-Level Agreement with Buzzword.\\
+As a corollary, no assumptions have been made regarding the maintenance of the software implemented for this project - namely the 5 components mentioned in \gref{subsec:Scope}.
+
+\subsection{Definition of Terms} \label{subsec:Definitions}
+\vspace{1cm}
+
+\begin{tabulary}{1.2\textwidth}{l L}
+Term & Definition \\
+
+Server & The hardware and software environment which will provide copies of the Kitchen, Waiting, and Customer components to connected client devices. Also provides the hardware and software for execution of the Server and Database components.\newline Server does \textbf{not} refer to a waiter, waitress, or other member of staff. \\ \midrule
+Client device & The device being used to interact with the system. This will be the computer used by Kitchen staff, mobile or tablet device used by waiting staff, and any customer's device which has received the Customer component of the system from the server.\\ \midrule
+Local Area Network (LAN) & The collection of computer networking devices within the restaurant's premises.
+\end{tabulary}
+
+\end{document}
+
