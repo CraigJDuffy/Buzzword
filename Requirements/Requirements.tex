@@ -1,11 +1,13 @@
-\documentclass[11pt, a4paper]{article}
+\documentclass[11pt, a4paper]{report}
 
 \usepackage[utf8]{inputenc}
 
-\usepackage{enumitem} %Used for modifing the labels used for items in lists.
+\usepackage{enumitem} %Used for modifing the labels used for items in lists. http://mirror.ox.ac.uk/sites/ctan.org/macros/latex/contrib/enumitem/enumitem.pdf
 \usepackage{hyperref} %Used for hyperlinks to reference materials, and section referencing.
 \usepackage{tabulary} %used for tables.
 \usepackage{booktabs} %Used for nicer table formatting eg midrule
+
+\usepackage{color} %Used to highlight things needing changed, updated, removed etc
 
 \def\sectionautorefname{Section}
 \def\subsectionautorefname{Subsection} % Reassigning the default names to have capitals.
@@ -13,42 +15,239 @@
 %The command gives hyperlinked referencings in the form Section #: SectionTitle
 \newcommand{\gref}[1]{\hyperref[#1]{\autoref*{#1}: \nameref{#1}}} % Good referencing = gref
 
+\def\itempar#1\\{\item \textbf{#1}\\} %Macro to automatically bold the first line of an item in a list. Usage is \itempar Line1\\ Line 2...N
+
 \begin{document}
+
+\chapter{System Requirements Specification}
+
+\tableofcontents
+\pagebreak
 
 \section{Introduction} \label{sec:Intro}
 
 This document outlines the requirements, scope, and boundaries placed upon the project based on an interpretation of the document \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Year 3 Group Project Specification - Restaurant Ordering System"}
 
-\subsection{Purpose of project} \label{subec:purpose}
+\section{Purpose} \label{sec:purpose}
 
-The purpose of this project is to develop a system to support restaurant staff in taking and fulfilling food orders from customers. The system is intended to make the process of relaying orders to the kitchen more efficient, whilst increasing the information available to customers regarding their order. The aim is to allow servers to take quickly take complex orders from a customer or group of customers and have this automatically relayed to kitchen staff. The kitchen staff will then be able to provide certain feedback on the order, such as estimated time to delivery, which will be viewable by customers through this system.
+The purpose of this system is to support restaurant staff in taking and fulfilling food orders from customers. The system is intended to make the process of relaying orders to the kitchen and fulfilling them more efficient, whilst increasing the information available to customers regarding their order. The aim is to allow servers to take quickly take complex orders from a customer or group of customers and have this automatically relayed to kitchen staff. The kitchen staff will then be able to provide certain feedback on the order, such as estimated time to delivery, which will be viewable by customers through this system.
 
-\subsection{Scope} \label{subsec:Scope}
-
-The restaurant ordering system (henceforth "The system") will be implemented as a web-based application, however it will not be designed for operation over the internet. While it makes use of standard web technologies that could be used in such a manner, none of the required security measures will be implemented. As such use of the system will be limited to client devices connected to the restaurant's wireless Local Area Network (LAN).\\
+\section{Scope} \label{sec:Scope}
+The Restaurant Ordering Support System (henceforth "The system", or "ROSS"), will be designed to receive orders from waiting staff and relay this information to staff working in the kitchen. ROSS will also allow waiting staff to amend orders, kitchen staff to provide feedback on orders (for example, the time until delivery), and customers to view some or all of this feedback alongside their order details. This is to achieve the aim of increasing operational efficiency at the restaurant and customer experience.\\
 \\
-The system shall consist of 5 distinct software components:
+The system will also be designed to handle a good variety of data to support the client's need to deploy the system across multiple differing restaurant environments.\\
+\\
+The system will not be designed to provide detailed instructions on the preparation of food, only what dishes have been ordered (with any modifications). It will also not implement a stock management system, though some emulation of such a system may be implemented.\\
+No aspect of the system will process payments from customers, though price information about items on the menu may be represented in the system. The system will also not be explicitly designed to integrate with any other technologies the restaurant may be using, for example Point of Sale or Stock Control systems.
+
+\section{Overview} \label{sec:Overview}
+\subsection{Context} \label{subsec:Context}
+
+The system will interact with 3 existing groups of people:
+\begin{enumerate}
+\item Waiting Staff\\
+These are the people who converse with customers to elicit instructions for the kitchen staff to act upon. These instructions are usually in the form of food and/or drinks orders, or amendments to previously made orders. In the existing system, they are also responsible for relaying information from the kitchen staff to a customer. Waiting staff may or may not deliver food from the kitchen to customers.
+\item Kitchen Staff\\
+This group consists of any person responsible for the preparation of food or drink for customer consumption.
+\item Customers\\
+Anyone who enters the restaurant's premises with the intent to purchase food or drink is considered a customer. The System is only concerned with formalising a customer's request, not with encouraging or eliciting purchases.
+\end{enumerate}
+
+\noindent
+These groups of people (collectively "users") will interface with ROSS through one of five distinct software components:
 \begin{enumerate}
 \item A Kitchen component to display information on current, unfulfilled orders to kitchen staff. The component will also be responsible for processing input to the system from the kitchen staff.
-\item A Waiting component to allow serving staff to enter, view, and amend customers' orders into the system.
-\item A Customer component allowing customers to view the current status of their order. Any other direct interaction between the system and any customer (IE not through a member of staff) will be the responsibility of this component.
+\item A Waiting component to allow waiting staff to enter, view, and amend customers' orders into the system.
+\item A Customer component allowing customers to view the current status of their order. Any other direct interaction between the system and any customer (IE not through another user) will be the responsibility of this component.
 \item A Database component responsible for storing any persistent information required by the system. For example all current unfulfilled orders, the restaurant's menu, and the availability of items on it. These examples will not necessarily be required by or implemented in the system.
 \item A Server component which will manage the flow of information between the four previously mentioned components.
-\end{enumerate} 
-\noindent
-No aspect of the system will process payments from customers, though price information about items on the menu may be represented in the system. The system will also not be designed to integrate with any other technologies the restaurant may be using, for example Point of Sale or Stock Control systems.\\
-\\
-The server, server component, and database component will be designed to handle traffic commensurate with the number of customers served by the restaurant currently, with accommodation for future increases.
+\end{enumerate}
 
-\subsection{Assumptions} \label{subsec:Assumptions}
+\noindent
+The general process of interaction expected is for a customer to converse with a member of Waiting staff to place or amend an order, or to request an update on their existing order. This member of Waiting staff will then interact with the system to formalise the customer's request through the Waiting component. The staff member will then receive some information from that same component regarding the request, for example "Accepted", "Denied", details of an order, etc. These details can then be acted upon by the staff member or customer.\\
+When a request has been formalised in this manner, the request is passed from the Waiting component to the server component, which will act upon the request and interact with other components as required. Interaction with the Database component will usually be related to either recording the request for possible future use within or outwith the system, or to confirm such a request is valid or feasible.\\
+\\
+In the case of new orders being placed or existing orders amended, the relevant details from the request will be passed from the Server component to the Kitchen component.\\
+This component, in relaying order details to the kitchen staff, allows them to prepare the food or drink as requested by the customer. It will also allow them to provide information related to the request to ROSS, which will then act accordingly.\\
+\\
+The customer's direct interaction with the system will include viewing the status of their order. That is the formalisation of their order recorded by ROSS, and some or all of the related information provided by the kitchen staff. Further interaction may or may not form part of the system as finally implemented.
+\\
+\\
+Interaction with the aforementioned software components will take place through hardware owned and operated by the customer (for the Customer component) or provided by the restaurant in all other cases.\\
+Interfaces between the components will utilise standard web technologies and practices.
+
+\subsection{Functions} \label{subsec:Functions}
+%TODO The system will have the ability to formalise a customer's order through a waiting staff member, process this order, and present pertinent information to the kitchen staff.\\
+%TODO The system shall record information  
+
+
+%TODO The server, server component, and database component will be designed to handle traffic commensurate with the number of customers served by the restaurant currently, with accommodation for future increases.
+
+\subsection{User Characteristics} \label{subsec:Characteristics}
+Expanding on the user groups defined in \gref{subsec:Context}, their use of the system can be further defined as follows:
+
+\begin{enumerate}
+\item \textbf{Waiting Staff} \\This group will interact with the system through a mobile wireless device, most likely in the form of a tablet computer. Each member of the group will have a device. Given the number of staff members varies by restaurant, the size of this group is unknown, however it is not expected for there to be any more than 20 such people at any given time. This group consists only of Waiting staff who are working at the time in question.\\ \\
+It is expected that with their regular usage this group will become familiar with the system's interface design (the Waiting component particularly), its functionality and limitations. As such the Waiting component can rely more heavily on implicit knowledge, making it more efficient to use through a simpler interface.\\
+There is a distinct possibility that certain aspects of the interface could be operated without looking at it given enough experience, and the design will aim to maximise this possibility.\\
+Using the system both on a regular basis multiple times a day and in relation to employment, this group place ease of use and functionality significantly higher than visual aesthetics. They do not want to enjoy the interface per se, rather they want it to be second nature and make no investment - physical or mental - in its operation.
+
+
+\item \textbf{Kitchen Staff}\\
+The kitchen staff also will make regular usage of th system multiple times a day in their employment. However their requirements are subtly different. In the potentially hectic and high-pressure environment of a kitchen the interface (kitchen component) must require a minimal amount of time and thought to operate. The aesthetics must also be carefully considered in order to convey as much information as possible without requiring appreciable concentration - it should work well with only glances from the staff.\\
+While implicit knowledge can be assumed through experience, 'blind' operation will likely not feature due to the changing nature of the information being displayed.\\ 
+\\
+This group will utilise a number of touch-screen devices of a size roughly according to an average desktop PC monitor. These will be installed in the kitchen itself in fixed locations, and may be shared between members. As such the size of kitchen is the determining factor rather than number of staff. An amount from 1 to 5 would be considered normal, with anything up to 10 devices being reasonably expected.
+
+
+\item \textbf{Customers}\\
+Unlike other groups the customers will not make regular usage of the system, and will not likely use it constantly throughout the day. As such they place a relatively high value on the aesthetics and enjoyment from using the system, and are willing to sacrifice some aspects of usability or functionality. That is not to say those aspects can be neglected.\\
+As a consequence, customers will require much more prompting and signposting from the system to help formalise their intent. Given their intermittent usage, customers will willingly pay more attention to the interface and afford more deliberation in their actions. This reduces the requirement for a slick and intuitive interface relative to the Kitchen and Waiting staff members.
+\end{enumerate}
+
+\section{Functional Requirements} \label{sec:Functional}
+
+\begin{enumerate}[label=F-UR-\arabic*, series=functional]
+
+\itempar \label{req:PlaceOrder}Allow waiting staff member to place customers' orders\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+
+\begin{enumerate}[label*=.\arabic*]
+\itempar \label{req:EnterID}Allow staff member to enter unique identification\\
+The system will accept from the staff member 1 or more pieces of information that will allow the order to be uniquely identified by both staff member and customer. These details will be some combination of:
+\begin{itemize}
+\item Any part of the customer's name. Forename, surname, nick-name, pen name and similar are all acceptable.
+\item Group Number. A number determined by the restaurant to group relevant orders together. For example, using a table number allows multiple separate orders by different people to be logically grouped.
+\item Unique Order Number. A number specific and unique to the order to which it is assigned. This is the only detail allowed to be used by itself.
+\end{itemize}
+The unique ID should be easily memorable by the customer. It is preferred if the customer has some reference to the Group Number or Unique Order Number eg. Number marked on the table.
+
+\itempar Present staff member with restaurant menu\\
+Show to the staff member the menu of the restaurant in a hierarchical manner.\\
+The position of elements displayed to the person should be consistent for any number of orders where the menu hierarchy has not been modified, and for any location in that hierarchy.
+
+\itempar Allow staff member to navigate the menu and select an item\\
+The staff member must be able to navigate the menu hierarchy in an arbitrary order, able to revisit and/or return to a previous location in the hierarchy.\\
+They must also be able to select any item from the menu, and to return to the menu from that selection. The location in the menu they return to should be the same location from which they made the selection.
+
+\itempar \label{req:OrderRequests}Allow staff member to record arbitrary details regarding selected item\\
+After selecting an item, the person must be able to record any arbitrary requests made by the customer regarding the item. This may include, but is not limited to: 
+\begin{itemize}
+\item Requests to omit items (eg remove cheese from a burger)
+\item Requests to add or substitute items (eg swap chips for curly fries)
+\item Acknowledgement of dietary or allergy requirements (eg peanut allergy)
+\item Selection from options listed on menu (eg cake with choice of custard or ice cream)
+\end{itemize}
+It must also be possible to record the amount of said item to be ordered. Where some arbitrary detail/request has been recorded, for example to omit cheese, that detail should be applied to \textbf{all} of the items specified by the amount recorded. So for example if the request "No cheese" and the amount "5" are recorded for an item "burger", the order should consist of 5 burgers of which \textbf{none} have cheese.
+
+\itempar Forming and placing order for fulfilment\\
+The staff member must be able to select and record details for a number %TODO Specify and link to appropriate Non-Functional Requirement
+of different items and have the system remember all previous selections and their details. Additionally they must be able to view this list of selections (defined as an order), and remove items from it.\\
+They must be able to place this order for fulfilment, that is to say, pass the information from their component through the system such that the kitchen staff can begin to prepare it.
+\end{enumerate}
+
+
+\itempar \label{req:AmendOrders}Allow waiting staff to amend existing orders\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+\begin{enumerate}[label*=.\arabic*]
+\itempar \label{req:RetrieveOrder}Retrieve order details\\
+The system must request the unique identification details entered as part of \autoref{req:EnterID} from the user.\\
+If these details are invalid, the system must notify the user and prompt again for input.\\
+There is no expectation for the system to check if the details refer to the intended order.\\
+\\
+Once a valid (but not necessarily 'correct') set of ID details has been received, the system must display the details of the order (to which the entered ID details refer) to the user. The system is not required to display all stored information regarding the order, only that which is considered pertinent %TODO consider Non-Functional Requirements
+
+\itempar Amend or Remove order details\\
+With an order being displayed to the user, they must be able to select any item in the order and change any associated details recorded as part of \autoref{req:OrderRequests}.\\
+The user must also have the ability to remove any number of items from an order.\\
+The system will also provide functionality to remove the entire order from the system.\\
+All of the above modifications are with respect to %TODO Specify limits on order ammendments in Non-Functional Requirements)
+\textcolor{red}{[LIMITS]}
+
+\itempar Confirm amended order\\
+Once the user has finished modifying the order (including removing it entirely) this change in information must be propagated through the system, and specifically notify the Kitchen staff.
+\end{enumerate}
+
+\itempar Display state of orders to Kitchen Staff\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+\begin{enumerate}[label*=.\arabic*]
+\itempar Display all unfulfilled orders\\
+The system must produce a complete list of all orders placed under \autoref{req:PlaceOrder} for display to Kitchen Staff with regards to \textcolor{red}{[Non-Functional Requirements]}.\\
+The complete information for an order must be displayed, as a collection of menu items with details in accordance with \autoref{req:OrderRequests}.
+
+\itempar Notify of amendments to orders\\
+The system must explicitly draw the attention of any Kitchen staff to changes in the order state which result from actions taken under \autoref{req:AmendOrders}. This includes where entire orders have been removed from the system. %TODO consider possible non-functional requirements for this
+\end{enumerate}
+
+\itempar Add or Update order information from Kitchen\\ %TODO Consider allowing kitchen to drop orders
+Priority: Variable\\
+Highest Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+
+\begin{enumerate}[label*=.\arabic*]
+\itempar Provide an estimate of time to complete an order\\ %TODO Must the kitchen provide it, or is it optional? Required by the system or by management?
+\underline{\smash{Priority: Must Have}}\\
+The system must allow Kitchen staff to provide an estimate of the time required to complete preparation of an entire order. This must be recorded by ROSS and made available for users to view as part of \autoref{req:RetrieveOrder}.\\
+The system must also allow for this estimate to be changed at any time.
+
+\itempar Provide an estimate of time to complete an individual item\\
+\underline{\smash{Priority: Should Have}}\\
+The system should allow Kitchen staff to specify an estimated preparation time for each individual item in an order, and have these individual timings displayed as part of \autoref{req:RetrieveOrder}. From these estimates the system should derive an overall estimate for the entire order.
+
+
+\end{enumerate}
+\end{enumerate}
+
+\section{Usability Requirements} \label{sec:Usability}
+
+
+\begin{enumerate}[resume*=functional]
+\item 
+\end{enumerate}
+\section{Performance Requirements} \label{sec:Performance}
+
+\section{System Interfaces} \label{sec:Interfaces}
+
+\section{System operations} \label{sec:Operations}
+
+\subsection{Human System Integration Requirements} \label{subsec:HSI}
+
+\subsection{Maintainability} \label{subsec:Maintainability}
+
+\subsection{Reliability} \label{subsec:Reliability}
+
+\section{Physical Characteristics}
+
+\subsection{Physical Requirements}
+
+\subsection{Adaptability Requirements}
+
+\section{Environmental Conditions}
+
+\section{System Security}
+
+\section{Information Management}
+
+\section{Policies and Regulations}
+
+\section{System Life Cycle Sustainment}
+
+\section{Packaging, Handling, Shipping, and Transportation}
+
+\section{Verification}
+
+\section{Assumptions and Dependencies} \label{subsec:Assumptions}
 
 It is assumed that the restaurant is capable of implementing and maintaining a reliable wireless Local Area Network.\\
 It is further assumed that the restaurant has or will have an active wireless Local Area Network implemented for the installation of this system.\\
 \\
 It is assumed that the restaurant has or will have the ability to maintain the server hardware and software - where said software has not been implemented as part of this project - by the end of this project. This may or may not be through a Service-Level Agreement with Buzzword.\\
-As a corollary, no assumptions have been made regarding the maintenance of the software implemented for this project - namely the 5 components mentioned in \gref{subsec:Scope}.
+As a corollary, no assumptions have been made regarding the maintenance of the software implemented for this project - namely the 5 components mentioned in \gref{sec:Scope}.
 
-\subsection{Definition of Terms} \label{subsec:Definitions}
+\section{Definition of Terms} \label{subsec:Definitions}
 \vspace{1cm}
 
 \begin{tabulary}{1.2\textwidth}{l L}
