@@ -7,6 +7,9 @@
 \usepackage{tabulary} %used for tables.
 \usepackage{booktabs} %Used for nicer table formatting eg midrule
 
+\usepackage[british]{babel} %biblatex treats english (the default) as American, and ruins the dates. Thus this is necessary to fix that.
+\usepackage[backend=biber, citestyle=authortitle, style=authortitle]{biblatex}
+
 \usepackage{color} %Used to highlight things needing changed, updated, removed etc
 
 \def\sectionautorefname{Section}
@@ -16,6 +19,10 @@
 \newcommand{\gref}[1]{\hyperref[#1]{\autoref*{#1}: \nameref{#1}}} % Good referencing = gref
 
 \def\itempar#1\\{\item \textbf{#1}\\} %Macro to automatically bold the first line of an item in a list. Usage is \itempar Line1\\ Line 2...N
+
+
+\addbibresource{sources.bib}
+
 
 \begin{document}
 
@@ -76,12 +83,9 @@ The customer's direct interaction with the system will include viewing the statu
 Interaction with the aforementioned software components will take place through hardware owned and operated by the customer (for the Customer component) or provided by the restaurant in all other cases.\\
 Interfaces between the components will utilise standard web technologies and practices.
 
-%\subsection{Functions} \label{subsec:Functions}
-%TODO The system will have the ability to formalise a customer's order through a waiting staff member, process this order, and present pertinent information to the kitchen staff.\\
-%TODO The system shall record information  
+\subsection{Functions} \label{subsec:Functions}
 
-
-%TODO The server, server component, and database component will be designed to handle traffic commensurate with the number of customers served by the restaurant currently, with accommodation for future increases.
+System functions are discussed generally in \gref{subsec:Context} and specifically in \gref{sec:Functional}
 
 \subsection{User Characteristics} \label{subsec:Characteristics}
 Expanding on the user groups defined in \gref{subsec:Context}, their use of the system can be further defined as follows:
@@ -270,7 +274,7 @@ The minimal set of details that must be shown are:
 
 \end{enumerate}
 
-\itempar Allow customer to make, amend, and remove orders\\
+\itempar \label{req:CustomerOrdering}Allow customer to make, amend, and remove orders\\
 Priority: Could Have\\
 Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
 \begin{enumerate}[label*=.\arabic*]
@@ -356,6 +360,9 @@ Source: Tommy Lamb\\
 \itempar \label{use:DisplayDistance}Displays understandable from a distance\\
 With respect to \autoref{req:KitchenDisplay}, all information displayed (in whatever form that may take) must be understandable by a user from a distance of at least 150 centimetres. The user is assumed to have good vision (does not require corrective lenses) and an unobstructed view of the interface. It is also assumed they are familiar with the interface and can therefore recognise certain graphical elements eg. symbols, colour coding.
 
+\itempar Displays must support wide viewing angles\\
+With respect to \autoref{req:KitchenDisplay}, any hardware used to display visually the information must support wide viewing angles in both the horizontal and vertical planes. Standard display technologies such as LCD are expected to suffice for this requirement.
+
 \itempar Displays easy to understand and unambiguous\\
 With respect to \autoref{req:KitchenDisplay}, a user must be able to understand any \textbf{single} piece of information being displayed within 5 seconds. They must have understood the information well enough to accurately relay it to another person at least 5 seconds after viewing the display.\\
 The user is assumed to have a view of the display meeting the assumptions and constraints of \autoref{use:DisplayDistance}. This includes interface experience.
@@ -366,6 +373,10 @@ Priority: Must Have\\
 Source: Tommy Lamb\\
 With respect to \autoref{req:KitchenDisplay}, no piece of information should be solely communicated to users through sound of any sort. This does not preclude the use of audible cues within the interface, but any such cue must be used in combination with a visual element of some description.
 
+\itempar Kitchen interface should not make unnecessary notifications\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:KitchenNotifications}, the system is only required to draw attention to amended or cancelled orders for which it has reason to believe the kitchen has actively begun preparation of any item within it. Any order which the system does not believe is being prepared currently does not have to have a notification of any sort when amended or cancelled. 
 
 \itempar Order status must remain up to date\\
 Priority: Must Have\\
@@ -378,6 +389,12 @@ Priority: Must Have\\
 Source: Tommy Lamb\\
 For any functionality involving a customer (the group as defined in \gref{subsec:Context}), the interface must be fully usable without training or instruction external to the interface itself. In other words, the customer must be able to execute any function of the system given the interface and no other information.\\
 It is assumed however that the customer in question has awareness of the context of usage, and a basic level of technological competence. Explicitly, an inability to use a standard web browser (or similar event) would not count has a failure against this requirement, even though it is part of the overall interface.
+
+\itempar Customers do not require an account to view order status\\
+Priority: Should Have\\
+Source: Craig Duffy\\
+A customer should not be required to register details with the restaurant in order to view the details of their order. This does not preclude asking for the unique order ID under \autoref{req:EnterID}, however any information entered must not be indefinitely stored.\\
+This requirement explicitly does not apply to \autoref{req:CustomerOrdering}.
 
 \end{enumerate}
 
@@ -440,13 +457,13 @@ Communication between server and database components should be carried out using
 The exact versions of any technology listed here is explicitly unspecified at this time.\\
 The mandated use of these standards does not preclude the use of non-standard software, where that software itself conforms to or makes use of these standards. For example, JavaScript libraries or What-You-See-Is-What-You-Get editors.
 
-\item Human-Computer interfaces must be touchscreen compatible\\
+\itempar Human-Computer interfaces must be touchscreen compatible\\
 Priority: Must Have\\
 Source: Tommy Lamb\\
 The hardware interface between Kitchen, Waiting, and Customer components and their users must be fully compatible with touchscreen technology. Any and all functionality or features of these components should be accessible through a touch screen interface.\\
 This does not preclude the potential use of other Human-Computer interface technologies, such as a mouse and keyboard.
 
-\item Hardware-Software interfaces should be through standard web browsers and operating systems\\
+\itempar Hardware-Software interfaces should be through standard web browsers and operating systems\\
 Priority: Should Have\\
 Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}\\
 With the exception of Server and Database components, all components should operate on their hardware and be fully functional through any of the following browsers:
@@ -498,37 +515,113 @@ The components to which this requirement applies include, but are not necessaril
 \item Web server software
 \end{itemize}
 This requirement explicitly does not apply to bespoke software written as part of this project.
+
+\itempar Bespoke software components should be highly independent\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+All bespoke software components written as part of this project should be designed and implemented in a way which minimises coupling between components. As a consequence, most maintenance of those software components should be able to be carried out in isolation without interfering with other components.
 \end{enumerate}
 
-%\subsection{Reliability} \label{subsec:Reliability}
+\subsection{Reliability} \label{subsec:Reliability}
 
-%\section{Physical Characteristics}
+No specific requirements are made under this section. Related requirements may be found under \gref{sec:Performance}.
 
-%\subsection{Physical Requirements}
+\section{Physical Characteristics}
 
-%\subsection{Adaptability Requirements}
+\subsection{Physical Requirements}
 
-%\section{Environmental Conditions}
+\begin{enumerate}[resume*=nonfunctional]
+\itempar Mobile hardware components should be light\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+Any mobile hardware operated by the restaurant as part of this system must not weigh more than 1 kilogram. Mobile here refers to any hardware which is intended to carried regularly by any user.
+\end{enumerate}
 
-%\section{System Security}
+\subsection{Adaptability Requirements}
 
-%\section{Information Management}
+\begin{enumerate}[resume*=nonfunctional]
+\itempar Easy to add new component instances\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The system must be designed to make it as easy as possible to add new component instances. For example, increasing the number of Waiting staff components, or displays in the kitchen.
+\end{enumerate}
 
-%\section{Policies and Regulations}
+\section{Environmental Conditions}
 
-%\section{System Life Cycle Sustainment}
+\begin{enumerate}[resume*=nonfunctional]
+\itempar Server must be adequately protected\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The environment in which the server hardware is to be installed must be suitable for sensitive electronic equipment. This necessitates as a minimum:
+\begin{itemize}
+\item Free from liquids and excess humidity
+\item Free from excess dust and other fine particles
+\item Free from combustible materials (including gases) that may be ignited by moderate heat or an electrical charge
+\item Free from or protected against electromagnetic interference
+\item Protection against power supply fluctuations (including power surges)
+\item Free from corrosive materials
+\item Free from children and animals
+\item Free from external vibrations and risk of physical shock
+\item Adequate ventilation
+\end{itemize}
 
-%\section{Packaging, Handling, Shipping, and Transportation}
+\itempar Kitchen hardware should operate under hazardous conditions\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+Hardware used in the kitchen must be able to operate fully for prolonged periods in any combination of the following conditions:
+\begin{itemize}
+\item High temperatures
+\item Moderate levels of airborne particles
+\item High humidity
+\item Risk of liquid splashes
+\end{itemize}
 
-%\section{Verification}
+\itempar Waiting and customer hardware require low electromagnetic interference\\
+Priority: Must have\\
+Source: Tommy Lamb\\
+Due to the wireless nature of communication, the environment for the customers and waiting staff must have low levels of electromagnetic interference to ensure performance. In particular, signal noise in the 2.4GHz, 5GHz and surrounding frequencies must kept to a minimum. This requires only that the communication signal being used be significantly stronger than any other electromagnetic radiation in the stated frequencies. This may be achieved through any balance of increasing signal strength or reducing background radiation.
+
+\end{enumerate}
+
+\section{System Security}
+
+\begin{enumerate}[resume*=nonfunctional]
+\itempar System must not be internet accessible\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+No aspect of the system can be accessible from outside of the restaurant's Local Area Network.
+
+\end{enumerate}
+
+\section{Information Management}
+
+No specific requirements are made under this section. Relevant requirements may be found under \gref{sec:Functional} and \gref{sec:Interfaces}
+
+\section{Policies and Regulations}
+
+No specific requirements are made under this section at this time.
+
+\section{System Life Cycle Sustainment}
+
+No specific requirements are made under this section at this time.
+
+\section{Packaging, Handling, Shipping, and Transportation}
+
+No specific requirements are made under this section at this time.
+
+\section{Verification}
+
+No specific plans have been made with regards to verification of the system. Suffice to say that extensive testing of software components will take place both individually and as integrated in the system. Additionally testing will take place with mock users, both familiar and unfamiliar with the system, to verify and quantify how those requirements placed on usability and human element interfaces are met.
 
 \section{Assumptions and Dependencies} \label{subsec:Assumptions}
 
-It is assumed that the restaurant is capable of implementing and maintaining a reliable wireless Local Area Network.\\
+It is assumed that the restaurant is capable of implementing and maintaining a reliable wireless Local Area Network pursuant to any relevant requirements specified in this document.\\
 It is further assumed that the restaurant has or will have an active wireless Local Area Network implemented for the installation of this system.\\
 \\
 It is assumed that the restaurant has or will have the ability to maintain the server hardware and software - where said software has not been implemented as part of this project - by the end of this project. This may or may not be through a Service-Level Agreement with Buzzword.\\
-As a corollary, no assumptions have been made regarding the maintenance of the software implemented for this project - namely the 5 components mentioned in \gref{sec:Scope}.
+As a corollary, no assumptions have been made regarding the maintenance of any bespoke software written for this project - primarily the 5 components mentioned in \gref{sec:Scope}.\\
+\\
+It is assumed that the restaurant will take all reasonable steps to manage physical access to human-system interfaces, and as such little to no security measures must be implemented in this project.
 
 \section{Definition of Terms} \label{subsec:Definitions}
 \vspace{1cm}
@@ -541,5 +634,9 @@ Client device & The device being used to interact with the system. This will be 
 Local Area Network (LAN) & The collection of computer networking devices within the restaurant's premises.
 \end{tabulary}
 
-\end{document}
+\nocite{*}
+\printbibliography
 
+
+
+\end{document}
