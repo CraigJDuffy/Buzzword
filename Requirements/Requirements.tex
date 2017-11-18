@@ -76,7 +76,7 @@ The customer's direct interaction with the system will include viewing the statu
 Interaction with the aforementioned software components will take place through hardware owned and operated by the customer (for the Customer component) or provided by the restaurant in all other cases.\\
 Interfaces between the components will utilise standard web technologies and practices.
 
-\subsection{Functions} \label{subsec:Functions}
+%\subsection{Functions} \label{subsec:Functions}
 %TODO The system will have the ability to formalise a customer's order through a waiting staff member, process this order, and present pertinent information to the kitchen staff.\\
 %TODO The system shall record information  
 
@@ -105,16 +105,25 @@ Unlike other groups the customers will not make regular usage of the system, and
 As a consequence, customers will require much more prompting and signposting from the system to help formalise their intent. Given their intermittent usage, customers will willingly pay more attention to the interface and afford more deliberation in their actions. This reduces the requirement for a slick and intuitive interface relative to the Kitchen and Waiting staff members.
 \end{enumerate}
 
+
+
+%%%%%%%%%%%%% Start of Functional Requirements %%%%%%%%%%%%%
+
+
+
+
 \section{Functional Requirements} \label{sec:Functional}
 
 \begin{enumerate}[label=F-UR-\arabic*, series=functional]
 
 \itempar \label{req:PlaceOrder}Allow waiting staff member to place customers' orders\\
-Priority: Must Have\\
+Priority: Variable\\
+Highest Priority: Must Have\\
 Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
 
 \begin{enumerate}[label*=.\arabic*]
 \itempar \label{req:EnterID}Allow staff member to enter unique identification\\
+\underline{\smash{Priority: Must Have}}\\
 The system will accept from the staff member 1 or more pieces of information that will allow the order to be uniquely identified by both staff member and customer. These details will be some combination of:
 \begin{itemize}
 \item Any part of the customer's name. Forename, surname, nick-name, pen name and similar are all acceptable.
@@ -123,15 +132,18 @@ The system will accept from the staff member 1 or more pieces of information tha
 \end{itemize}
 The unique ID should be easily memorable by the customer. It is preferred if the customer has some reference to the Group Number or Unique Order Number eg. Number marked on the table.
 
-\itempar Present staff member with restaurant menu\\
+\itempar \label{req:getMenu}Present staff member with restaurant menu\\
+\underline{\smash{Priority: Must Have}}\\
 Show to the staff member the menu of the restaurant in a hierarchical manner.\\
 The position of elements displayed to the person should be consistent for any number of orders where the menu hierarchy has not been modified, and for any location in that hierarchy.
 
 \itempar Allow staff member to navigate the menu and select an item\\
+\underline{\smash{Priority: Must Have}}\\
 The staff member must be able to navigate the menu hierarchy in an arbitrary order, able to revisit and/or return to a previous location in the hierarchy.\\
 They must also be able to select any item from the menu, and to return to the menu from that selection. The location in the menu they return to should be the same location from which they made the selection.
 
 \itempar \label{req:OrderRequests}Allow staff member to record arbitrary details regarding selected item\\
+\underline{\smash{Priority: Must Have}}\\
 After selecting an item, the person must be able to record any arbitrary requests made by the customer regarding the item. This may include, but is not limited to: 
 \begin{itemize}
 \item Requests to omit items (eg remove cheese from a burger)
@@ -141,10 +153,19 @@ After selecting an item, the person must be able to record any arbitrary request
 \end{itemize}
 It must also be possible to record the amount of said item to be ordered. Where some arbitrary detail/request has been recorded, for example to omit cheese, that detail should be applied to \textbf{all} of the items specified by the amount recorded. So for example if the request "No cheese" and the amount "5" are recorded for an item "burger", the order should consist of 5 burgers of which \textbf{none} have cheese.
 
-\itempar Forming and placing order for fulfilment\\
-The staff member must be able to select and record details for a number %TODO Specify and link to appropriate Non-Functional Requirement
-of different items and have the system remember all previous selections and their details. Additionally they must be able to view this list of selections (defined as an order), and remove items from it.\\
-They must be able to place this order for fulfilment, that is to say, pass the information from their component through the system such that the kitchen staff can begin to prepare it.
+\itempar \label{req:ConfirmOrder}Forming and placing order for fulfilment\\
+\underline{\smash{Priority: Must Have}}\\
+The staff member must be able to select and record details for a number of different items and have the system remember all previous selections and their details. Additionally they must be able to view this list of selections (defined as an order), and remove items from it.\\
+They must be able to place this order for fulfilment, such that information recorded by the system is displayed pursuant to \autoref{req:KitchenDisplay}.\\
+The exact number of items an order may contain is specified in \autoref{per:OrderSize}.
+
+\itempar \label{req:AutoGroup}Automatically grouping items in an order\\
+\underline{\smash{Priority: Could Have}}\\
+The system could automatically group certain menu items together in the order and show these groups as part of \autoref{req:KitchenDisplay}, with the aim of all the items in a group being complete and delivered to the customer at approximately the same time. For example, it could group starters, mains, and desserts into separate groups such that each group is individually prepared and served sequentially.
+
+\itempar \label{req:ManualGroup}Specify item groupings in an order\\
+\underline{\smash{Priority: Should Have}}\\
+Similar to \autoref{req:AutoGroup} and in addition to \autoref{req:OrderRequests} above, the system should separately and explicitly record groupings of items within an order. Any specified grouping must override any automatic grouping that may otherwise be made by the system under \autoref{req:AutoGroup}.
 \end{enumerate}
 
 
@@ -157,87 +178,349 @@ The system must request the unique identification details entered as part of \au
 If these details are invalid, the system must notify the user and prompt again for input.\\
 There is no expectation for the system to check if the details refer to the intended order.\\
 \\
-Once a valid (but not necessarily 'correct') set of ID details has been received, the system must display the details of the order (to which the entered ID details refer) to the user. The system is not required to display all stored information regarding the order, only that which is considered pertinent %TODO consider Non-Functional Requirements
+Once a valid (but not necessarily 'correct') set of ID details has been received, the system must display the details of the order (to which the entered ID details refer) to the user. The system is not required to display all stored information regarding the order, only that which is considered pertinent.
 
 \itempar Amend or Remove order details\\
 With an order being displayed to the user, they must be able to select any item in the order and change any associated details recorded as part of \autoref{req:OrderRequests}.\\
 The user must also have the ability to remove any number of items from an order.\\
 The system will also provide functionality to remove the entire order from the system.\\
-All of the above modifications are with respect to %TODO Specify limits on order ammendments in Non-Functional Requirements)
-\textcolor{red}{[LIMITS]}
+The waiting staff member may remove an order marked complete under \autoref{req:OrderReady}, but may not modify its details. 
 
-\itempar Confirm amended order\\
-Once the user has finished modifying the order (including removing it entirely) this change in information must be propagated through the system, and specifically notify the Kitchen staff.
+
+\itempar \label{req:ConfirmAmendment}Confirm amended order\\
+Once the user has finished modifying the order (including removing it entirely) this change in information must be propagated through the system, and specifically notify the Kitchen staff as per \autoref{req:KitchenNotifications}.
 \end{enumerate}
 
-\itempar Display state of orders to Kitchen Staff\\
+\itempar \label{req:KitchenDisplay}Display state of orders to Kitchen Staff\\
 Priority: Must Have\\
 Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
 \begin{enumerate}[label*=.\arabic*]
 \itempar Display all unfulfilled orders\\
-The system must produce a complete list of all orders placed under \autoref{req:PlaceOrder} for display to Kitchen Staff with regards to \textcolor{red}{[Non-Functional Requirements]}.\\
-The complete information for an order must be displayed, as a collection of menu items with details in accordance with \autoref{req:OrderRequests}.
+The system must produce a complete list of all orders placed under \autoref{req:PlaceOrder} for display to Kitchen Staff with regards to \autoref{use:KitchenDisplay} and any other relevant requirements.
+All relevant information for an order must be displayed. This should be as a collection of menu items, and must include any requests made in accordance with \autoref{req:OrderRequests}.
 
-\itempar Notify of amendments to orders\\
-The system must explicitly draw the attention of any Kitchen staff to changes in the order state which result from actions taken under \autoref{req:AmendOrders}. This includes where entire orders have been removed from the system. %TODO consider possible non-functional requirements for this
+\itempar \label{req:KitchenNotifications}Notify of amendments to orders\\
+The system must explicitly draw the attention of any Kitchen staff to changes in the order state which result from actions taken under \autoref{req:AmendOrders}. This includes where entire orders have been removed from the system.
 \end{enumerate}
 
-\itempar Add or Update order information from Kitchen\\ %TODO Consider allowing kitchen to drop orders
+\itempar \label{req:KitchenInfo}Add or Update order information from Kitchen\\
 Priority: Variable\\
 Highest Priority: Must Have\\
 Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
 
 \begin{enumerate}[label*=.\arabic*]
-\itempar Provide an estimate of time to complete an order\\ %TODO Must the kitchen provide it, or is it optional? Required by the system or by management?
+\itempar Provide an estimate of time to complete an order\\
 \underline{\smash{Priority: Must Have}}\\
 The system must allow Kitchen staff to provide an estimate of the time required to complete preparation of an entire order. This must be recorded by ROSS and made available for users to view as part of \autoref{req:RetrieveOrder}.\\
 The system must also allow for this estimate to be changed at any time.
 
+\itempar \label{req:OrderReady}Mark an order as complete\\
+\underline{\smash{Priority: Must Have}}\\
+Kitchen staff must be able to mark an order as complete within the system, after which it cannot be amended - though it must be able to be removed from the system.
+
 \itempar Provide an estimate of time to complete an individual item\\
 \underline{\smash{Priority: Should Have}}\\
-The system should allow Kitchen staff to specify an estimated preparation time for each individual item in an order, and have these individual timings displayed as part of \autoref{req:RetrieveOrder}. From these estimates the system should derive an overall estimate for the entire order.
-
+The system should allow Kitchen staff to specify an estimated preparation time for each individual item in an order, and have these individual timings displayed as part of \autoref{req:RetrieveOrder}. From these estimates the system should derive an overall estimate for the entire order.\\
+The system must also allow for these estimates to be changed at any time if made.
 
 \end{enumerate}
+
+\itempar Kitchen staff can acknowledge information changes\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+
+\begin{enumerate}[label*=.\arabic*]
+
+\itempar Kitchen staff can acknowledge order amendments\\
+With respect to \autoref{req:KitchenNotifications}, kitchen staff may (but are not required to) acknowledge amendments to orders. Where an amendment is acknowledged the interface must display the modified order in the same manner as any other order which is in the same state. For example, if an order currently being prepared is amended the acknowledgement should cause it to be represented in the same manner as other in-progress orders. Likewise for orders awaiting preparation, and any other states that may occur.\\
+This requirement does \textbf{not} include where orders have been cancelled/removed form the system. See \autoref{use:AckCancellation}.
+
+\itempar \label{use:AckCancellation} Kitchen staff must acknowledge order cancellations\\
+With respect to \autoref{req:KitchenNotifications}, kitchen staff \textbf{must} acknowledge any order which has been cancelled. Until this acknowledgement the interface must continue to draw attention to the cancelled order. Only after this acknowledgement is received may the system consider the order cancellation completed and act accordingly.
+
 \end{enumerate}
+
+\itempar Allow kitchen staff to remove orders\\
+Priority: Could Have\\
+Source: Tommy Lamb\\
+\begin{enumerate}[label*=.\arabic*]
+\itempar Remove order from system\\
+The system could allow kitchen staff members to cancel an order, removing it from the list of unfulfilled orders in the system.\\
+The system should record a reason for the cancellation as provided by the kitchen staff member cancelling the order.
+
+\itempar Notify Waiting staff member of cancellation\\
+When an order is cancelled by the kitchen, the system should notify at least one member (and preferably only one) of the waiting staff who can relay this information to the customer in a personable manner.
+\end{enumerate}
+
+\itempar \label{req:CustomerStatus}Allow customer to view order status\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+
+\begin{enumerate}[label*=.\arabic*]
+
+\itempar Retrieve order details for customer\\
+This should function in the same manner as \autoref{req:RetrieveOrder}, without specifying that the user interface be the same.\\
+This requirement need not show the same details as \autoref{req:RetrieveOrder}, only those details considered relevant to the customer.\\
+The minimal set of details that must be shown are:
+\begin{itemize}
+\item Items ordered, alongside any specific requests made under \autoref{req:OrderRequests}.
+\item Estimated preparation times as recorded under \autoref{req:KitchenInfo}.
+\item If the order has been marked complete by the kitchen as under \autoref{req:KitchenInfo}.
+\end{itemize}
+
+\end{enumerate}
+
+\itempar Allow customer to make, amend, and remove orders\\
+Priority: Could Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+\begin{enumerate}[label*=.\arabic*]
+
+\itempar Customer placing an order\\
+This would execute in the same manner as \autoref{req:PlaceOrder}. However the specific implementation of those requirements (including User Interface elements) should be considerably different, respecting the differing user needs outlined in \gref{subsec:Characteristics}
+
+
+\itempar Customer amending or removing an order\\
+This would execute in the same manner as \autoref{req:AmendOrders}. However the specific implementation of those requirements (including User Interface elements) should be considerably different, respecting the differing user needs outlined in \gref{subsec:Characteristics}
+\end{enumerate}
+
+\itempar Generate report based on previous, fulfilled orders\\
+Priority: Could Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}\\
+The system could generate reports based on the orders made through ROSS for use by restaurant management in business decisions. The exact form or usage of these reports is unspecified.
+
+\itempar Intelligent recommendation system for order items\\
+Priority: Will Not\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}\\
+ROSS will not implement functionality to display to a user recommendations for items to add to the order being made or amended.
+\end{enumerate}
+
+
+
+
+%%%%%%%%%%%%% End of Functional Requirements %%%%%%%%%%%%%
+
+
 
 \section{Usability Requirements} \label{sec:Usability}
 
+\begin{enumerate}[label=NF-UR-\arabic*, series=nonfunctional]
 
-\begin{enumerate}[resume*=functional]
-\item 
+\itempar Quick for waiting staff to enter orders\\
+Priority: Variable\\
+Highest Priority: Must Have\\
+Source: Tommy Lamb\\
+\begin{enumerate}[label*=.\arabic*]
+
+\itempar \label{use:1MinuteOrder}Single item orders must take no more than 1 minute\\
+\underline{\smash {Priority: Must Have}}\\
+From start to finish, it must be possible to take less than 1 minute for a member of waiting staff to record a single item as part of an order. This time does not include recording any specific requests under \autoref{req:OrderRequests}, nor any time taken for the order to be propagated through the system (eg passing the order to the server component). This does include entering unique information (\autoref{req:EnterID}), but not generating the information (eg asking the customer their name).\\
+\\
+This requirement does not stipulate that all such orders must take less than 1 minute, only that it is feasibly achievable with the User Interface being used.\\
+The requirement also makes no specification for the experience of the staff member. It is acceptable for the staff member in question to be experienced both in using the interface and menu structure in meeting this requirement.\\
+Reasonable accommodation should be made for the complexity of ID information being entered and the size/complexity of the menu.
+
+
+\itempar Single item orders should take no more than 30 seconds\\
+\underline{\smash{Priority: Should Have}}\\
+The same conditions as \autoref{use:1MinuteOrder}, except that the process should take no longer than 30 seconds. In meeting this requirement consideration must be made for the size and complexity of menu. It may not be (and is not expected) that all items in the menu could be used in meeting this requirement. Likewise a certain level of experience may be required in meeting this requirement.
+
 \end{enumerate}
+
+\itempar Menu information must be up to date\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:getMenu}, the menu information displayed by the system should represent the menu at that time. The menu information must not be outdated (but may become outdated in the time it is being displayed to the user).
+
+\itempar Orders placed must be validated\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:ConfirmOrder} and \autoref{req:ConfirmAmendment}, any orders or amendments recorded by the system must be confirmed to be valid. Where it is invalid, the system must notify the user.
+
+\itempar Kitchen estimates should be quick to enter\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:KitchenInfo}, it must take no longer than 30 seconds to enter a time estimate or mark an order as complete. The user must be able to complete this task using their non-dominant hand. The criteria must also be met if the user is using their dominant hand. In either case, the task must be completable using only a single hand, not both.\\
+This does not include the time taken to come up with the estimate or to realise the order is ready, only the time to register the information in the system.\\
+This does not preclude a user using two hands to operate the system, just that it must be fully operable using a single hand.
+
+\itempar Kitchen estimates are not required by system\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+While the system must support preparation time estimates as per \autoref{req:KitchenInfo}, the system should also cope with orders which have no estimate provided. This should hold true for the entire life-cycle of an order, from when it is first placed through to completion and including any modifications. When displaying order details as per \autoref{req:RetrieveOrder}, a meaningful message must be displayed (if pertinent) regarding the lack of estimate. This applies particularly to \autoref{req:CustomerStatus}.
+
+\itempar \label{use:KitchenDisplay}Kitchen displays must be easily read\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+
+\begin{enumerate}[label*=.\arabic*]
+\itempar \label{use:DisplayDistance}Displays understandable from a distance\\
+With respect to \autoref{req:KitchenDisplay}, all information displayed (in whatever form that may take) must be understandable by a user from a distance of at least 150 centimetres. The user is assumed to have good vision (does not require corrective lenses) and an unobstructed view of the interface. It is also assumed they are familiar with the interface and can therefore recognise certain graphical elements eg. symbols, colour coding.
+
+\itempar Displays easy to understand and unambiguous\\
+With respect to \autoref{req:KitchenDisplay}, a user must be able to understand any \textbf{single} piece of information being displayed within 5 seconds. They must have understood the information well enough to accurately relay it to another person at least 5 seconds after viewing the display.\\
+The user is assumed to have a view of the display meeting the assumptions and constraints of \autoref{use:DisplayDistance}. This includes interface experience.
+\end{enumerate}
+
+\itempar Kitchen interface must not rely on audio cues\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:KitchenDisplay}, no piece of information should be solely communicated to users through sound of any sort. This does not preclude the use of audible cues within the interface, but any such cue must be used in combination with a visual element of some description.
+
+
+\itempar Order status must remain up to date\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:RetrieveOrder}, the information displayed to the user must reflect the most recent information held in the system. Any changes in the information as held by the system must be reflected in the interface within 2 minutes of the change occurring.\\
+This time does not include any delays caused by technical issues, such as those which may affect communication between the various system components. Rather this reflects a normal operating environment.
+
+\itempar Customer interface cannot require training\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+For any functionality involving a customer (the group as defined in \gref{subsec:Context}), the interface must be fully usable without training or instruction external to the interface itself. In other words, the customer must be able to execute any function of the system given the interface and no other information.\\
+It is assumed however that the customer in question has awareness of the context of usage, and a basic level of technological competence. Explicitly, an inability to use a standard web browser (or similar event) would not count has a failure against this requirement, even though it is part of the overall interface.
+
+\end{enumerate}
+
 \section{Performance Requirements} \label{sec:Performance}
 
+\begin{enumerate}[resume*=nonfunctional]
+\itempar ROSS must handle at least 500 orders an hour\\
+Priority: Must Have\\
+Source: Craig Duffy\\
+ROSS must be able to handle anything up to and including 500 orders being placed for each and every continuous hour of operation without error.\\
+This requirement does not preclude the system failing due to an excess number of orders in a period of time shorter than one hour.
+
+
+\itempar ROSS must be capable of handling 10 orders in one minute\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The system must have the capability to handle at least 10 orders being placed within one minute without error. This does not require that 10 orders be handled every minute for the duration of operation, rather that within one minute of \textbf{independent} operation 10 orders could be handled. It is acceptable that conditions preceding the minute in question prevent 10 orders being processed without error.\\
+It is acceptable for the system to fail should more than 10 orders be placed within one minute.
+
+\itempar Orders must be propagated quickly\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The system must be able to fully propagate a new order or amendment to an existing order through all components within 1 minute of confirmation. Explicitly, any capable component must be able to display to a user the details of the order within 1 minute of confirmation.\\
+Confirmation here refers to the completion of \autoref{req:ConfirmAmendment} or \autoref{req:ConfirmOrder}.
+
+\itempar \label{per:OrderSize} System must support orders up to 100 items\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The system must support the placement of orders consisting of up to (but not including) 100 items. The order may contain any combination of unique or duplicate items, which may or may not have specific requests made under \autoref{req:OrderRequests}. The value of 100 does \textbf{not} include any amounts specified under \autoref{req:OrderRequests}. As such the order may request more than 100 portions of food or drink from the kitchen when the order as entered into the system does not list more than 100 items.\\
+This is a technical requirement placed on the system and does not preclude a lower operational limit being imposed by the restaurant.
+
+\end{enumerate}
+
+
 \section{System Interfaces} \label{sec:Interfaces}
+
+See also requirements specified under \gref{sec:Usability}.
+
+\begin{enumerate}[resume*=nonfunctional]
+
+\itempar Intercomponent communication must use web standards\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+In communicating between components, with the exception of between the server and database components, HTTP and underlying networking standards must be used. These may include, but are not limited to:
+\begin{itemize}
+\item Ethernet
+\item 802.11 (commonly called Wi-Fi)
+\item IPv4 / IPv6
+\item TCP / UDP
+\end{itemize} 
+In addition to this, the usage of HTTP must be through standard protocols and practices.\\
+The precise form of data being transferred should be some combination of the following, complying with W3C standards:
+\begin{itemize}
+\item HTML
+\item CSS
+\item JavaScript
+\item JSON
+\end{itemize}
+Communication between server and database components should be carried out using the best available standard compatible with the specific database implementation. For example (which is non-binding), SQL.\\
+The exact versions of any technology listed here is explicitly unspecified at this time.\\
+The mandated use of these standards does not preclude the use of non-standard software, where that software itself conforms to or makes use of these standards. For example, JavaScript libraries or What-You-See-Is-What-You-Get editors.
+
+\item Human-Computer interfaces must be touchscreen compatible\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The hardware interface between Kitchen, Waiting, and Customer components and their users must be fully compatible with touchscreen technology. Any and all functionality or features of these components should be accessible through a touch screen interface.\\
+This does not preclude the potential use of other Human-Computer interface technologies, such as a mouse and keyboard.
+
+\item Hardware-Software interfaces should be through standard web browsers and operating systems\\
+Priority: Should Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}\\
+With the exception of Server and Database components, all components should operate on their hardware and be fully functional through any of the following browsers:
+\begin{itemize}
+\item Google Chrome
+\item Mozilla Firefox
+\item Apple Safari
+\item Microsoft Edge
+\end{itemize}
+Additionally those components which run on browsers should be fully functional on any of the following operating systems:
+\begin{itemize}
+\item Microsoft Windows
+\item Apple MacOS
+\item Apple iOS
+\item Android
+\item Certain Linux Distributions, including
+\subitem Ubuntu
+\subitem CentOS
+\end{itemize}
+No specification is made for what hardware the system should operate on, as this is considered in the domain of the operating system being used.
+
+
+\end{enumerate}
+
 
 \section{System operations} \label{sec:Operations}
 
 \subsection{Human System Integration Requirements} \label{subsec:HSI}
 
+No specific requirements are made under this section. Other requirements relevant to Human-System integration may be found in \gref{sec:Interfaces} and \gref{sec:Usability}.
+
 \subsection{Maintainability} \label{subsec:Maintainability}
 
-\subsection{Reliability} \label{subsec:Reliability}
+\begin{enumerate}[resume*=nonfunctional]
 
-\section{Physical Characteristics}
+\itempar Standard components should be easily maintained\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+Those components of the system which have not been specifically designed or implemented as part of this project should be reasonably maintainable by a single person who has appropriate domain-specific knowledge and experience. Certain issues may arise with which the person requires assistance from an outside party. This requirement does not preclude that possibility, nor is this requirement considered unmet under such circumstances. It is only required that such a person be able to maintain the specified components to a reasonable degree.\\
+The components to which this requirement applies include, but are not necessarily limited to:
+\begin{itemize}
+\item Operating System Software
+\item Device drivers
+\item All hardware owned and operated by the restaurant, including
+	\subitem Waiting staff devices
+	\subitem Kitchen devices
+	\subitem The server hardware
+	\subitem Networking hardware
+\item Web server software
+\end{itemize}
+This requirement explicitly does not apply to bespoke software written as part of this project.
+\end{enumerate}
 
-\subsection{Physical Requirements}
+%\subsection{Reliability} \label{subsec:Reliability}
 
-\subsection{Adaptability Requirements}
+%\section{Physical Characteristics}
 
-\section{Environmental Conditions}
+%\subsection{Physical Requirements}
 
-\section{System Security}
+%\subsection{Adaptability Requirements}
 
-\section{Information Management}
+%\section{Environmental Conditions}
 
-\section{Policies and Regulations}
+%\section{System Security}
 
-\section{System Life Cycle Sustainment}
+%\section{Information Management}
 
-\section{Packaging, Handling, Shipping, and Transportation}
+%\section{Policies and Regulations}
 
-\section{Verification}
+%\section{System Life Cycle Sustainment}
+
+%\section{Packaging, Handling, Shipping, and Transportation}
+
+%\section{Verification}
 
 \section{Assumptions and Dependencies} \label{subsec:Assumptions}
 
@@ -251,7 +534,7 @@ As a corollary, no assumptions have been made regarding the maintenance of the s
 \vspace{1cm}
 
 \begin{tabulary}{1.2\textwidth}{l L}
-Term & Definition \\
+Term & Definition \\ \midrule
 
 Server & The hardware and software environment which will provide copies of the Kitchen, Waiting, and Customer components to connected client devices. Also provides the hardware and software for execution of the Server and Database components.\newline Server does \textbf{not} refer to a waiter, waitress, or other member of staff. \\ \midrule
 Client device & The device being used to interact with the system. This will be the computer used by Kitchen staff, mobile or tablet device used by waiting staff, and any customer's device which has received the Customer component of the system from the server.\\ \midrule
