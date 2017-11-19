@@ -45,7 +45,7 @@ The Restaurant Ordering Support System (henceforth "The system", or "ROSS"), wil
 The system will also be designed to handle a good variety of data to support the client's need to deploy the system across multiple differing restaurant environments.\\
 \\
 The system will not be designed to provide detailed instructions on the preparation of food, only what dishes have been ordered (with any modifications). It will also not implement a stock management system, though some emulation of such a system may be implemented.\\
-No aspect of the system will process payments from customers, though price information about items on the menu may be represented in the system. The system will also not be explicitly designed to integrate with any other technologies the restaurant may be using, for example Point of Sale or Stock Control systems.
+No aspect of the system will process payments from customers, though price information about items on the menu may be represented in the system. The system will also not be explicitly designed to integrate with any other technologies the restaurant may be using, for example, Point of Sale or Stock Control systems.
 
 \section{Overview} \label{sec:Overview}
 \subsection{Context} \label{subsec:Context}
@@ -65,14 +65,14 @@ These groups of people (collectively "users") will interface with ROSS through o
 \begin{enumerate}
 \item A Kitchen component to display information on current, unfulfilled orders to kitchen staff. The component will also be responsible for processing input to the system from the kitchen staff.
 \item A Waiting component to allow waiting staff to enter, view, and amend customers' orders into the system.
-\item A Customer component allowing customers to view the current status of their order. Any other direct interaction between the system and any customer (IE not through another user) will be the responsibility of this component.
+\item A Customer component allowing customers to view the current status of their order. Any other direct interaction between the system and any customer (I.E. not through another user) will be the responsibility of this component.
 \item A Database component responsible for storing any persistent information required by the system. For example all current unfulfilled orders, the restaurant's menu, and the availability of items on it. These examples will not necessarily be required by or implemented in the system.
 \item A Server component which will manage the flow of information between the four previously mentioned components.
 \end{enumerate}
 
 \noindent
-The general process of interaction expected is for a customer to converse with a member of Waiting staff to place or amend an order, or to request an update on their existing order. This member of Waiting staff will then interact with the system to formalise the customer's request through the Waiting component. The staff member will then receive some information from that same component regarding the request, for example "Accepted", "Denied", details of an order, etc. These details can then be acted upon by the staff member or customer.\\
-When a request has been formalised in this manner, the request is passed from the Waiting component to the server component, which will act upon the request and interact with other components as required. Interaction with the Database component will usually be related to either recording the request for possible future use within or outwith the system, or to confirm such a request is valid or feasible.\\
+The general process of interaction expected is for a customer to converse with a member of Waiting staff to place or amend an order, or to request an update on their existing order. This member of Waiting staff will then interact with the system to formalise the customer's request through the Waiting component. The staff member will then receive some information from that same component regarding the request; for example, "Accepted", "Denied", details of an order, etc. These details can then be acted upon by the staff member or customer.\\
+When a request has been formalised in this manner, the request is passed from the Waiting component to the Server component, which will act upon the request and interact with other components as required. Interaction with the Database component will usually be related to either recording the request for possible future use within or outwith the system, or to confirm such a request is valid or feasible.\\
 \\
 In the case of new orders being placed or existing orders amended, the relevant details from the request will be passed from the Server component to the Kitchen component.\\
 This component, in relaying order details to the kitchen staff, allows them to prepare the food or drink as requested by the customer. It will also allow them to provide information related to the request to ROSS, which will then act accordingly.\\
@@ -81,7 +81,7 @@ The customer's direct interaction with the system will include viewing the statu
 \\
 \\
 Interaction with the aforementioned software components will take place through hardware owned and operated by the customer (for the Customer component) or provided by the restaurant in all other cases.\\
-Interfaces between the components will utilise standard web technologies and practices.
+Interfaces between the components will utilise standard web technologies and practices as described in \gref{sec:Interfaces}.
 
 \subsection{Functions} \label{subsec:Functions}
 
@@ -91,21 +91,22 @@ System functions are discussed generally in \gref{subsec:Context} and specifical
 Expanding on the user groups defined in \gref{subsec:Context}, their use of the system can be further defined as follows:
 
 \begin{enumerate}
-\item \textbf{Waiting Staff} \\This group will interact with the system through a mobile wireless device, most likely in the form of a tablet computer. Each member of the group will have a device. Given the number of staff members varies by restaurant, the size of this group is unknown, however it is not expected for there to be any more than 20 such people at any given time. This group consists only of Waiting staff who are working at the time in question.\\ \\
+\item \textbf{Waiting Staff} \\This group will interact with the system through a mobile wireless device, most likely in the form of a tablet computer. Each member of the group will have a device. Given the number of staff members varies by restaurant, the size of this group is unknown; however it is not expected for there to be any more than 20 such people at any given time. This group consists only of Waiting staff who are working at the time in question.\\
+\\
 It is expected that with their regular usage this group will become familiar with the system's interface design (the Waiting component particularly), its functionality and limitations. As such the Waiting component can rely more heavily on implicit knowledge, making it more efficient to use through a simpler interface.\\
 There is a distinct possibility that certain aspects of the interface could be operated without looking at it given enough experience, and the design will aim to maximise this possibility.\\
-Using the system both on a regular basis multiple times a day and in relation to employment, this group place ease of use and functionality significantly higher than visual aesthetics. They do not want to enjoy the interface per se, rather they want it to be second nature and make no investment - physical or mental - in its operation.
+Using the system both on a regular basis multiple times a day and in relation to employment, this group likely place ease of use and functionality significantly higher than visual aesthetics. They likely do not want to enjoy the interface per se, rather they want it to be second nature and make no investment - physical or mental - in its operation.
 
 
 \item \textbf{Kitchen Staff}\\
-The kitchen staff also will make regular usage of th system multiple times a day in their employment. However their requirements are subtly different. In the potentially hectic and high-pressure environment of a kitchen the interface (kitchen component) must require a minimal amount of time and thought to operate. The aesthetics must also be carefully considered in order to convey as much information as possible without requiring appreciable concentration - it should work well with only glances from the staff.\\
+The kitchen staff also will make regular usage of the system multiple times a day in their employment. However their requirements are subtly different. In the potentially hectic and high-pressure environment of a kitchen, the interface (Kitchen component) must require a minimal amount of time and thought to operate. The aesthetics must also be carefully considered in order to convey as much information as possible without requiring appreciable concentration - it should work well with only glances from the staff.\\
 While implicit knowledge can be assumed through experience, 'blind' operation will likely not feature due to the changing nature of the information being displayed.\\ 
 \\
-This group will utilise a number of touch-screen devices of a size roughly according to an average desktop PC monitor. These will be installed in the kitchen itself in fixed locations, and may be shared between members. As such the size of kitchen is the determining factor rather than number of staff. An amount from 1 to 5 would be considered normal, with anything up to 10 devices being reasonably expected.
+This group will utilise a number of touch-screen devices of a size roughly according to an average desktop PC monitor. These will be installed in the kitchen itself in fixed locations, and may be shared amongst members. As such the size of kitchen is the determining factor rather than the number of staff. An amount from 1 to 5 would be considered normal, with anything up to 10 devices being reasonably expected.
 
 
 \item \textbf{Customers}\\
-Unlike other groups the customers will not make regular usage of the system, and will not likely use it constantly throughout the day. As such they place a relatively high value on the aesthetics and enjoyment from using the system, and are willing to sacrifice some aspects of usability or functionality. That is not to say those aspects can be neglected.\\
+Unlike other groups, the customers will not make regular usage of the system, and will not likely use it constantly throughout the day. As such they likely place a relatively high value on the aesthetics and enjoyment from using the system, and are willing to sacrifice some aspects of usability or functionality. That is not to say those aspects can be neglected.\\
 As a consequence, customers will require much more prompting and signposting from the system to help formalise their intent. Given their intermittent usage, customers will willingly pay more attention to the interface and afford more deliberation in their actions. This reduces the requirement for a slick and intuitive interface relative to the Kitchen and Waiting staff members.
 \end{enumerate}
 
@@ -589,7 +590,15 @@ Due to the wireless nature of communication, the environment for the customers a
 \itempar System must not be internet accessible\\
 Priority: Must Have\\
 Source: Tommy Lamb\\
-No aspect of the system can be accessible from outside of the restaurant's Local Area Network.
+No aspect of the system can be accessible from outside of the restaurant's Local Area Network.\\
+This applies only to the system as installed within a specific restaurant. It explicitly does not apply during any phase of this project prior to installation at a restaurant.
+
+\itempar \label{secure:HardwareLocking}Software components should be hardware locked\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+Any and all software components of the system designed for use by any staff member should be limited to operating on specific hardware devices. Specifically, the Kitchen and Waiting components should only be accessible through the hardware devices installed in the kitchen and given to waiting staff.\\
+This requirement makes no specification regarding access, physical or otherwise, to these hardware devices.\\
+This also applies only to the system as installed within a specific restaurant. It explicitly does not apply during any phase of this project prior to installation at a restaurant.
 
 \end{enumerate}
 
@@ -599,7 +608,19 @@ No specific requirements are made under this section. Relevant requirements may 
 
 \section{Policies and Regulations}
 
-No specific requirements are made under this section at this time.
+\begin{enumerate}[resume*=nonfunctional]
+\itempar System must be able to adapt to differing ID representations\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+\\
+With respect to \autoref{req:EnterID}, the system as it is installed in a restaurant needs only to support one form of unique ID during use. This may or may not consist of 1 or more pieces of individual data. The exact form of ID to be used by the system will be specified by the specific restaurant's organisational policies. As the system is to be designed for installation "across [a] diverse range of restaurants" (\cite{Specification}), the system must allow the form of ID used to be specified during installation and setup.\\
+The system does not have to support any arbitrary form of ID specified during installation, but must minimally offer:
+\begin{itemize}
+\item The combination of Table Number and Customer Name.
+\item A System-wide Unique Identification Number (equivalent to an order number)
+\end{itemize}
+This requirement does not apply to any internal representation used by the system, only to how the identity of an order is represented in interacting with any users.
+\end{enumerate}
 
 \section{System Life Cycle Sustainment}
 
@@ -621,7 +642,7 @@ It is further assumed that the restaurant has or will have an active wireless Lo
 It is assumed that the restaurant has or will have the ability to maintain the server hardware and software - where said software has not been implemented as part of this project - by the end of this project. This may or may not be through a Service-Level Agreement with Buzzword.\\
 As a corollary, no assumptions have been made regarding the maintenance of any bespoke software written for this project - primarily the 5 components mentioned in \gref{sec:Scope}.\\
 \\
-It is assumed that the restaurant will take all reasonable steps to manage physical access to human-system interfaces, and as such little to no security measures must be implemented in this project.
+It is assumed that the restaurant will take all reasonable steps to manage access to human-system interfaces, and as such little to no security measures must be implemented in this project. Human-system interfaces here refers primarily (but not exclusively) to the hardware devices to which \autoref{secure:HardwareLocking} applies. That is those hardware devices through which access-limited software components can be accessed. For example, the devices carried by waiting staff.
 
 \section{Definition of Terms} \label{subsec:Definitions}
 \vspace{1cm}
