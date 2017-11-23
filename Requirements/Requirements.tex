@@ -1,11 +1,14 @@
 \documentclass[11pt, a4paper]{report}
 
 \usepackage[utf8]{inputenc}
-
+\usepackage{graphicx}%Required for graphics.
 \usepackage{enumitem} %Used for modifing the labels used for items in lists. http://mirror.ox.ac.uk/sites/ctan.org/macros/latex/contrib/enumitem/enumitem.pdf
 \usepackage{hyperref} %Used for hyperlinks to reference materials, and section referencing.
 \usepackage{tabulary} %used for tables.
 \usepackage{booktabs} %Used for nicer table formatting eg midrule
+
+%This package gives us sideways figures and tables
+\usepackage{rotating}
 
 \usepackage[british]{babel} %biblatex treats english (the default) as American, and ruins the dates. Thus this is necessary to fix that.
 \usepackage[backend=biber, citestyle=authortitle, style=authortitle]{biblatex}
@@ -22,6 +25,8 @@
 
 
 \addbibresource{sources.bib}
+
+\usepackage{appendix} %http://anorien.csc.warwick.ac.uk/mirrors/CTAN/macros/latex/contrib/appendix/appendix.pdf
 
 
 \begin{document}
@@ -654,6 +659,21 @@ Server & The hardware and software environment which will provide copies of the 
 Client device & The device being used to interact with the system. This will be the computer used by Kitchen staff, mobile or tablet device used by waiting staff, and any customer's device which has received the Customer component of the system from the server.\\ \midrule
 Local Area Network (LAN) & The collection of computer networking devices within the restaurant's premises.
 \end{tabulary}
+
+\section*{Appendices}
+
+\begin{subappendices}
+
+\section{Use Case Diagram}
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=1]{Figures/UseCaseDiagram.png}
+\caption{Use case diagram for the Restaurant Ordering Support System.}
+For clarity and simplicity a one-to-one relationship with specific requirements is not enforced, and specific use cases ignore component boundaries.
+\end{sidewaysfigure}
+
+
+\end{subappendices}
 
 \nocite{*}
 \printbibliography
