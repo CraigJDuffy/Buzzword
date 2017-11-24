@@ -10,10 +10,11 @@
 %This package gives us sideways figures and tables
 \usepackage{rotating}
 
+\usepackage{float}		%Gives the "H" placement command, which really means here - not here if it fits. Will start new page if required.
+%E.G. \begin{figure}[H] will appear exactly there in the document, preceeded and succeeded by exactly what you'd expect
+
 \usepackage[british]{babel} %biblatex treats english (the default) as American, and ruins the dates. Thus this is necessary to fix that.
 \usepackage[backend=biber, citestyle=authortitle, style=authortitle]{biblatex}
-
-\usepackage{color} %Used to highlight things needing changed, updated, removed etc
 
 \def\sectionautorefname{Section}
 \def\subsectionautorefname{Subsection} % Reassigning the default names to have capitals.
@@ -23,11 +24,7 @@
 
 \def\itempar#1\\{\item \textbf{#1}\\} %Macro to automatically bold the first line of an item in a list. Usage is \itempar Line1\\ Line 2...N
 
-
 \addbibresource{sources.bib}
-
-\usepackage{appendix} %http://anorien.csc.warwick.ac.uk/mirrors/CTAN/macros/latex/contrib/appendix/appendix.pdf
-
 
 \begin{document}
 
@@ -637,7 +634,63 @@ No specific requirements are made under this section at this time.
 
 \section{Verification}
 
+
+
+
 No specific plans have been made with regards to verification of the system. Suffice to say that extensive testing of software components will take place both individually and as integrated in the system. Additionally testing will take place with mock users, both familiar and unfamiliar with the system, to verify and quantify how those requirements placed on usability and human element interfaces are met.
+
+
+\section{UML Diagrams}
+
+\subsection{Use Case Diagram}
+
+\pagebreak
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=1]{Figures/UseCaseDiagram.png}
+\caption{Use case diagram for the Restaurant Ordering Support System.}
+For clarity and simplicity a one-to-one relationship with specific requirements is not enforced, and specific use cases ignore component boundaries.
+\end{sidewaysfigure}
+
+
+\subsection{Activity Diagrams}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{Figures/RetrieveOrder.png}
+\caption{A sub-activity to retrieve details of a given order.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1]{Figures/UpdateOrderDB.png}
+\caption{A sub-activity to perform an update to an order in the Database component.\newline
+Updates can include adding, amending, or removing an order as well as adding prep. time estimates or marking as complete.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{Figures/CustomerViewDetails.png}
+\caption{The activity diagram for a customer to view their order status.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.55]{Figures/PlaceOrder.png}
+\caption{The activity diagram for entering an order into the system.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.55]{Figures/WaiterAmendOrder.png}
+\caption{The activity diagram representing waiting staff amending an order.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{Figures/KitchenAmendOrder.png}
+\caption{The activity diagram representing kitchen staff amending an order.}
+\end{figure}
 
 \section{Assumptions and Dependencies} \label{subsec:Assumptions}
 
@@ -657,23 +710,11 @@ Term & Definition \\ \midrule
 
 Server & The hardware and software environment which will provide copies of the Kitchen, Waiting, and Customer components to connected client devices. Also provides the hardware and software for execution of the Server and Database components.\newline Server does \textbf{not} refer to a waiter, waitress, or other member of staff. \\ \midrule
 Client device & The device being used to interact with the system. This will be the computer used by Kitchen staff, mobile or tablet device used by waiting staff, and any customer's device which has received the Customer component of the system from the server.\\ \midrule
-Local Area Network (LAN) & The collection of computer networking devices within the restaurant's premises.
+Local Area Network (LAN) & The collection of computer networking devices within the restaurant's premises. \\ \midrule
+Prep. & Short for Preparation. In the context of the phrase "prep. time" it refers to the time taken from starting to prepare the order/item (depending on usage) to being completed.
 \end{tabulary}
 
-\section*{Appendices}
 
-\begin{subappendices}
-
-\section{Use Case Diagram}
-\begin{sidewaysfigure}
-\centering
-\includegraphics[scale=1]{Figures/UseCaseDiagram.png}
-\caption{Use case diagram for the Restaurant Ordering Support System.}
-For clarity and simplicity a one-to-one relationship with specific requirements is not enforced, and specific use cases ignore component boundaries.
-\end{sidewaysfigure}
-
-
-\end{subappendices}
 
 \nocite{*}
 \printbibliography
