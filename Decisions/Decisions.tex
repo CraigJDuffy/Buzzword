@@ -5,6 +5,8 @@
 \usepackage{hyperref} %Used for hyperlinks to reference materials, and section referencing.
 \usepackage{tabulary} %used for tables.
 \usepackage{booktabs} %Used for nicer table formatting eg midrule
+\usepackage{graphicx} %Used for, well, graphics
+\usepackage{float} %Used to put graphics in their place
 
 \usepackage[british]{babel} %biblatex treats english (the default) as American, and ruins the dates. Thus this is necessary to fix that.
 \usepackage[backend=biber, citestyle=authortitle, style=authortitle]{biblatex}
@@ -34,13 +36,27 @@ The server-side components consist of the code required to handle the data trans
 Although designed and implemented as a web application, the system is not intended to be used in any capacity over the internet. In order to ease the development process the system will be internet accessible during that period, with the intent to disallow internet connections when installing the system in a restaurant. This would be achieved through restricting access to local IP addresses through the server and networking equipment.\\
 The reason for this is because the system as specified does not specifically require any over-the-internet features, and doing so massively reduces the security and authentication requirements for the software we are implementing. Without this stipulation, some sort of account management sub-system would need to be implemented to limit access to the Waiting and Kitchen components.
 
+
+\subsubsection{Architecture Diagram}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{Figures/SystemArchitectureDiagram.png}
+\caption{Architectural overview of ROSS.}
+\vspace{1cm}
+\flushleft
+As a web app, the exact number of devices and people connected to the Local Area Network is flexible.\\
+No specification is made as to the Local Area Network topology.
+\end{figure}
+
+\pagebreak
+
 \subsection{Existing software and infrastructure usage}
 
 During the software development phase of the project, the software will be implemented on the existing LAMP server provided to students within the MACS department. This is to remove the need to implement and maintain a server to test on and allow us to focus on the web app itself. The same software stack would be utilised in the final product when installed within a restaurant, though not necessarily the same software versions.\\
 This stack is chosen for its commonness and free open-source nature. This makes it cheap and easy to implement and maintain, especially when the client may not have a sizeable or experienced support system for web technologies.\\
 \\
 In terms of other software incorporated into the product, the decision has been made to use the React JavaScript library in order to ease the development of the User Interface (UI). The library makes it significantly easier to associate functionality and states with specific visual components, bringing JavaScript much closer to an object-orientated paradigm. The library also has functionality to react to changes in state and update the relevant UI elements, implementation specifics of which are not yet fully researched. No explicit plans are made to use any other libraries or frameworks not built-in to technologies used (e.g. the standard built-in PHP library). The project remains open to the potential offered by other libraries which may come up during development. These will be judged on, amongst other things, their ease of incorporation to the existing code base and any advantages they provide in the immediate and long-term future. Specific efforts will be made to avoid incorporating too many libraries and bloating the product with largely unused code.
-
 
 \subsection{Development technologies}
 
