@@ -49,13 +49,13 @@
 		\vspace{1cm}
 		\textit{Buzzword (Group 5)}\par
 		\begin{tabulary}{\textwidth}{rcl|rcl}
-			\\ \textsc{Kerr Brydon} & - & &
-			\textsc{Wai Chong} & - & \\
+			\\ \textsc{Kerr Brydon} & - & H00219387&
+			\textsc{Wai Chong} & - & H00187212\\
 			\textsc{Craig Duffy} & - & H00235298 &
 			\textsc{Tommy Lamb} & - & H00217505 \\
-			\textsc{Alastair Nibloe} & - & &
-			\textsc{Mamta Sofat} & - & \\
-			\textsc{Michael Steventon} & - & &
+			\textsc{Alastair Nibloe} & - & H00184083&
+			\textsc{Mamta Sofat} & - & H00236213\\
+			\textsc{Michael Steventon} & - & H00191545&
 			\textsc{Michael Lones} & - & \textsc{Manager} \\
 		\end{tabulary} \\
 	
@@ -756,6 +756,8 @@ Prep. & Short for Preparation. In the context of the phrase "prep. time" it refe
 \chapter{Risk Analysis}
 
 \pagebreak
+\minitoc
+\pagebreak
 
 \section{Risk Identification} \label{sec:riskID}
 \subsection{Background}
@@ -982,7 +984,6 @@ Git and GitHub will be used to provide strong version control and serve as a bac
 Documentation is primarily to be written using LaTeX to take full advantage of Git. Since Git cannot work with binary files (for example PDF, DocX), the fullness of its version control cannot be exploited unless a plain-text file format is used. LaTeX is written in plain text, allowing full use of version control. It also has the advantage of automating significant amounts of document formatting, making it easier to produce documentation in parallel and maintain a consistent aesthetic and format. It also makes the merging or documents easier.\\
 \\
 In terms of communication within the team, WhatsApp was decided as the method of choice. This is because email was felt too slow and easily missed, and of the various communication applications out there it was the one most members had in common. For more formal communication within the team and with external parties (such as line manager), email is used. This is because, although slower, email gives a clear record of communication both in attributing statements to people and specifying who received a given message.
-\section{Risk Analysis}
 
 \section{Project Plan}
 The project plan carries forward from Stage Two. It was unclear if the specification wished us to include stage one but as this document was produced during this stage it seemed illogical to do so. 
@@ -1054,7 +1055,8 @@ App & Abbreviation of application.
 
 \chapter{Project Costing} 
 \pagebreak 
-
+\minitoc
+\pagebreak
 \section{Costing} 
 \subsection{Hardware} 
 Hardware:
@@ -1106,6 +1108,8 @@ First six months free.
 
 \chapter{Usability Evaluation of Mock-Ups}
 \pagebreak
+\minitoc
+\pagebreak
 \section{Usability} 
 \subsection{Introduction} 
 This   document   outlines   the   process   we   took   in   creating   and   executing   a   usability testing   plan   for   our   Restaurant   Ordering   Support   System   (ROSS).   Said   testing   was carried   out   with   the   aim   of   identifying   any   flaws   in   our   initial   design   and   to   gather   a rough   idea   of   user   performance   with   the   system.\\
@@ -1124,7 +1128,10 @@ The   participants   will   be   asked   to   complete   one   questionnaire   b
 \subsection{Experiment Design} 
 Participants   will   be   asked   to   complete   a   series   of   tasks   on   each   part   of   the   system. These   tasks   are   representative   of   what   we   believe   will   be   some   of   the   most common   actions   taken   by   users   once   the   system   has   been   fully   implemented. These   ideas   were   extracted   from   our   requirements   document   to   help   us   identify which   features   to   test   most   strenuously.\\
 However,   our   prototype   is   nothing   more   than   a   shell   user   interface.   Therefore   we cannot   test   certain   requirements   such   as   ‘F-UR-1.5   Forming   and   Placing   Order   for Fulfilment’.   Since   the   three   sections   of   the   system   are   not   interlinking   in   the prototype,   we   cannot   currently   test   the   successful   processing   of   orders   and   their recording   in   the   system.   The   confirmation   of   a   successful   order   would   be   its appearance   in   the   kitchen   display.
+
+
 \subsubsection{Tasks (Wait Staff App)} 
+
 \begin{enumerate} 
 \item Navigate   to   the   main   course   menu.
 \item Add   ‘Spaghetti   Bolognese’   to   the   order.
@@ -1132,31 +1139,42 @@ However,   our   prototype   is   nothing   more   than   a   shell   user   int
 \item Find   what   soft   drinks   are   for   sale.
 \item Place   the   order/check   out.
 \end{enumerate} 
+
+
 \subsubsection{Tasks (Kitchen Display)} 
+
 \begin{enumerate} 
 \item Check   status   of   table   2.
 \end{enumerate} 
+
+
 \subsubsection{Tasks (Customer Feedback Display)} 
+
 \begin{enumerate} 
 \item Enter an Order Reference.
 \item Check Order Status.
 \item Summon Waiter to request amendment to an order.
 \end{enumerate} 
+
+
 \subsection{Findings} 
 There were five (5) participants in this study.
+
+
 \subsubsection{Pre-questionnaire Results} 
 
 \begin{enumerate} 
-\item How often do you visit a restaurant? \\ \\
-\begin{tabulary}{\textwidth}{| L l |}
-\toprule
+\item ~\\ %How often do you visit a restaurant? \\ \\
+\begin{tabulary}{\textwidth}{ L c }
+\multicolumn{2}{ l }{How often do you visit a restaurant?}\\ \midrule
 Daily & 0 \\ \midrule
 Few times a week & 1 \\ \midrule
 Once a week & 2 \\ \midrule
 Once a month & 2 \\ \midrule
 never & 0 \\ \bottomrule
 \end{tabulary}
-\item Have you ever had difficulty placing an order in a restaurant? \\ 80\% No, 20\% Yes %TODO TablularX
+
+\item Have you ever had difficulty placing an order in a restaurant? \\ 80\% No, 20\% Yes
 \item What common issues have you come across in restaurants? 
 \begin{itemize} 
 \item Poor Service
@@ -1167,9 +1185,9 @@ never & 0 \\ \bottomrule
 \end{itemize} 
 \item Have you ever ordered food online through a website or an app?\\
 Yes 100\%
-\item Did you mostly enjoy the service? 
-\begin{tabulary}{\textwidth}{| L l |}
-\toprule
+\item ~\\
+\begin{tabulary}{\textwidth}{ L c }
+\multicolumn{2}{ l }{Did you mostly enjoy the service?}\\ \midrule
 Yes & 3 \\ \midrule
 Mostly & 1 \\ \midrule
 No & 1 \\ \bottomrule
@@ -1212,36 +1230,47 @@ Mostly understood, some were unhappy with the lack of clarity in the summary.
 \item Summon waiter to request amendment to the order.\\
 All participants managed this without an issue. 
 \end{enumerate} 
+
+
 \subsubsection{Post-Questionnaire Results} 
+
 \begin{enumerate} 
 \item How each participant (A - E) Rated Their Experience \\ \includegraphics[scale = 0.5]{Figures/PQ1.png} 
-\item Did you find the system intutitive to use? (i.e. Did all items appear under the correct headings/ menus you expected them to?) \\ 
-\begin{tabulary}{\textwidth}{| L l |}
+
+\item Did you find the system intutitive to use? (i.e. Did all items appear under the correct headings/ menus you expected them to?) \\
+
+\begin{tabulary}{\textwidth}{ L c}
 \toprule
-Extremely Intuitive & 0 \\ \midrule
-Very Intuitive & 0 \\ \midrule
-Somewhat Intuitive & 3 \\ \midrule
-Not Very Intuitive & 2 \\ \midrule
+Extremely Intuitive & 0 \\ 
+Very Intuitive & 0 \\ 
+Somewhat Intuitive & 3 \\ 
+Not Very Intuitive & 2 \\ 
 Not at all intuitive & 0 \\ \bottomrule
 \end{tabulary}
-\item Did you find yourself relying on the investigator to help often? \\
-\begin{tabulary}{\textwidth}{| L l |}
-\toprule
-Very Often & 1 \\ \midrule
-Quite often & 2 \\ \midrule
-Occasionally  & 1 \\ \midrule
-Rarely & 1 \\ \midrule
+\vspace{1cm}
+
+\item  
+\begin{tabulary}{\textwidth}{L c}
+\multicolumn{2}{ l }{Did you find yourself relying on the investigator to help often?}\\ \midrule
+Very Often & 1 \\ 
+Quite often & 2 \\ 
+Occasionally  & 1 \\ 
+Rarely & 1 \\ 
 Never & 0 \\ \bottomrule
 \end{tabulary}
-\item Are you satisfied with the look of the system? \\
-\begin{tabulary}{\textwidth}{| L l |}
-\toprule
-Extremely Satisfied & 0 \\ \midrule
-Very Satisfied & 0 \\ \midrule
-Somewhat Satisfied & 2 \\ \midrule
-Not Very Satisfied & 2 \\ \midrule
+\vspace{1cm}
+
+\item  
+\begin{tabulary}{\textwidth}{ L c}
+\multicolumn{2}{l}{Are you satisfied with the look of the system?} \\ \midrule
+Extremely Satisfied & 0 \\ 
+Very Satisfied & 0 \\ 
+Somewhat Satisfied & 2 \\ 
+Not Very Satisfied & 2 \\ 
 Not at all Satisfied & 1 \\ \bottomrule
 \end{tabulary}
+~\\
+
 \item Would you like to use a system like this one in a restaurant? \\
 \begin{itemize} 
 \item Yes, it appeared fairly straightforward.
@@ -1249,7 +1278,8 @@ Not at all Satisfied & 1 \\ \bottomrule
 \item Not really. It seemed to over complicate the whole thing
 \item Maybe, if some improvements were made.
 \item The Idea is good. Should be a good system once errors have been fixed.
-\end{itemize} 
+\end{itemize}
+ 
 \item Do you have any thoughts on how to improve the system?\\
 \begin{itemize}
 \item Tighten up on Presentation. A few careless errors with spelling and layout.
@@ -1258,6 +1288,7 @@ Not at all Satisfied & 1 \\ \bottomrule
 \item Provide more options. Provide some more explanation for things like the kitchen orders. 
 \item Too complex for how little it does 
 \end{itemize} 
+
 \end{enumerate}
 \subsection{Conclusions} 
 \subsubsection{Features} 
@@ -1302,22 +1333,25 @@ List of colour codes:
 
 \section{Appendix} 
 \subsection{Mock-up Design}
-\subsubsection{Wait Staff App} 
 \begin{sidewaysfigure}
 \centering
-\includegraphics[scale=0.8]{Figures/WaitStaffApp.png}
+\includegraphics[scale=0.65]{Figures/WaitStaffApp.png}
+\caption{Design for the Waiting component}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
 \centering
-\includegraphics[scale=0.8]{Figures/KitchenDisplay.png}
+\includegraphics[scale=0.65]{Figures/KitchenDisplay.png}
+\caption{Design for the Kitchen component}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
 \centering
-\includegraphics[scale=0.8]{Figures/Customer1.png}
+\includegraphics[scale=0.5]{Figures/Customer1.png}
+\caption{Design for Customer component - First Screen}
 \end{sidewaysfigure}
 \begin{sidewaysfigure}
 \centering
-\includegraphics[scale=0.8]{Figures/Customer2.png}
+\includegraphics[scale=0.5]{Figures/Customer2.png}
+\caption{Design for Customer component - Second Screen}
 \end{sidewaysfigure}
 
 %TODO Consent Form and Questionnaire Forms
