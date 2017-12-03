@@ -1,0 +1,1360 @@
+\documentclass[11pt, a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{hyperref} %Used for hyperlinks to reference materials, and section referencing.
+\usepackage{tabulary} %used for tables.
+\usepackage{booktabs} %Used for nicer table formatting eg midrule
+\usepackage{graphicx} %Used for, well, graphics
+\usepackage{float} %Used to put graphics in their place
+\usepackage{enumitem} %Used for modifing the labels used for items in lists. http://mirror.ox.ac.uk/sites/ctan.org/macros/latex/contrib/enumitem/enumitem.pdf
+\usepackage{rotating} %Used for sideways figures
+
+
+\usepackage[british]{babel} %biblatex treats english (the default) as American, and ruins the dates. Thus this is necessary to fix that.
+\usepackage[backend=biber, citestyle=authortitle, style=authortitle]{biblatex}
+
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Subsection} % Reassigning the default names to have capitals.
+%The command gives hyperlinked referencings in the form Section #: SectionTitle
+\newcommand{\gref}[1]{\hyperref[#1]{\autoref*{#1}: \nameref{#1}}} % Good referencing = gref
+
+\def\itempar#1\\{\item \textbf{#1}\\} %Macro to automatically bold the first line of an item in a list. Usage is \itempar Line1\\ Line 2...Line N
+
+\usepackage{minitoc-hyper} %Used to give contents pages for individual chapters. Mini Tables of Contents.
+
+\addbibresource{sources.bib}
+
+\setcounter{tocdepth}{0}
+
+\begin{document}
+
+\begin{titlepage}
+	\thispagestyle{empty}
+	{\centering
+		\includegraphics[width=0.5\textwidth]{heriot-watt-logo.png}\par\vspace{1cm}
+	%	{\scshape\LARGE Heriot-Watt University \par}
+		\vspace{1cm}
+		{\LARGE F29SO - Software Engineering\par}
+		{\LARGE Stage 1 - The Bid\par}
+		\vspace{1.5cm}
+	%	{\scshape\Large Coursework\par}
+		\vspace{1.5cm}
+		{\scshape\LARGE\bfseries Bid for Restaurant Ordering System by Buzzword \par}
+
+		\vspace{3.5cm}
+			\begin{center}
+					November 25\textsuperscript{th} 2017
+			\end{center}
+		\vspace{1cm}
+		\textit{Buzzword (Group 5)}\par
+		\begin{tabulary}{\textwidth}{rcl|rcl}
+			\\ \textsc{Kerr Brydon} & - & H00219387&
+			\textsc{Wai Chong} & - & H00187212\\
+			\textsc{Craig Duffy} & - & H00235298 &
+			\textsc{Tommy Lamb} & - & H00217505 \\
+			\textsc{Alastair Nibloe} & - & H00184083&
+			\textsc{Mamta Sofat} & - & H00236213\\
+			\textsc{Michael Steventon} & - & H00191545&
+			\textsc{Michael Lones} & - & \textsc{Manager} \\
+		\end{tabulary} \\
+	
+	}
+\end{titlepage}
+
+\dominitoc
+\tableofcontents
+
+\chapter{Requirements Specification}
+
+\nocite{*}
+
+\pagebreak
+\minitoc
+\pagebreak
+
+\section{Introduction} \label{sec:Intro}
+
+This document outlines the requirements, scope, and boundaries placed upon the project based on an interpretation of the document \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Year 3 Group Project Specification - Restaurant Ordering System"}
+
+\section{Purpose} \label{sec:purpose}
+
+The purpose of this system is to support restaurant staff in taking and fulfilling food orders from customers. The system is intended to make the process of relaying orders to the kitchen and fulfilling them more efficient, whilst increasing the information available to customers regarding their order. The aim is to allow servers to take quickly take complex orders from a customer or group of customers and have this automatically relayed to kitchen staff. The kitchen staff will then be able to provide certain feedback on the order, such as estimated time to delivery, which will be viewable by customers through this system.
+
+\section{Scope} \label{sec:Scope}
+The Restaurant Ordering Support System (henceforth "The system", or "ROSS"), will be designed to receive orders from waiting staff and relay this information to staff working in the kitchen. ROSS will also allow waiting staff to amend orders, kitchen staff to provide feedback on orders (for example, the time until delivery), and customers to view some or all of this feedback alongside their order details. This is to achieve the aim of increasing operational efficiency at the restaurant and customer experience.\\
+\\
+The system will also be designed to handle a good variety of data to support the client's need to deploy the system across multiple differing restaurant environments.\\
+\\
+The system will not be designed to provide detailed instructions on the preparation of food, only what dishes have been ordered (with any modifications). It will also not implement a stock management system, though some emulation of such a system may be implemented.\\
+No aspect of the system will process payments from customers, though price information about items on the menu may be represented in the system. The system will also not be explicitly designed to integrate with any other technologies the restaurant may be using, for example, Point of Sale or Stock Control systems.
+
+\section{Overview} \label{sec:Overview}
+\subsection{Context} \label{subsec:Context}
+
+The system will interact with 3 existing groups of people:
+\begin{enumerate}
+\item Waiting Staff\\
+These are the people who converse with customers to elicit instructions for the kitchen staff to act upon. These instructions are usually in the form of food and/or drinks orders, or amendments to previously made orders. In the existing system, they are also responsible for relaying information from the kitchen staff to a customer. Waiting staff may or may not deliver food from the kitchen to customers.
+\item Kitchen Staff\\
+This group consists of any person responsible for the preparation of food or drink for customer consumption.
+\item Customers\\
+Anyone who enters the restaurant's premises with the intent to purchase food or drink is considered a customer. The System is only concerned with formalising a customer's request, not with encouraging or eliciting purchases.
+\end{enumerate}
+
+\noindent
+These groups of people (collectively "users") will interface with ROSS through one of five distinct software components:
+\begin{enumerate}
+\item A Kitchen component to display information on current, unfulfilled orders to kitchen staff. The component will also be responsible for processing input to the system from the kitchen staff.
+\item A Waiting component to allow waiting staff to enter, view, and amend customers' orders into the system.
+\item A Customer component allowing customers to view the current status of their order. Any other direct interaction between the system and any customer (I.E. not through another user) will be the responsibility of this component.
+\item A Database component responsible for storing any persistent information required by the system. For example all current unfulfilled orders, the restaurant's menu, and the availability of items on it. These examples will not necessarily be required by or implemented in the system.
+\item A Server component which will manage the flow of information between the four previously mentioned components.
+\end{enumerate}
+
+\noindent
+The general process of interaction expected is for a customer to converse with a member of Waiting staff to place or amend an order, or to request an update on their existing order. This member of Waiting staff will then interact with the system to formalise the customer's request through the Waiting component. The staff member will then receive some information from that same component regarding the request; for example, "Accepted", "Denied", details of an order, etc. These details can then be acted upon by the staff member or customer.\\
+When a request has been formalised in this manner, the request is passed from the Waiting component to the Server component, which will act upon the request and interact with other components as required. Interaction with the Database component will usually be related to either recording the request for possible future use within or outwith the system, or to confirm such a request is valid or feasible.\\
+\\
+In the case of new orders being placed or existing orders amended, the relevant details from the request will be passed from the Server component to the Kitchen component.\\
+This component, in relaying order details to the kitchen staff, allows them to prepare the food or drink as requested by the customer. It will also allow them to provide information related to the request to ROSS, which will then act accordingly.\\
+\\
+The customer's direct interaction with the system will include viewing the status of their order. That is the formalisation of their order recorded by ROSS, and some or all of the related information provided by the kitchen staff. Further interaction may or may not form part of the system as finally implemented.
+\\
+\\
+Interaction with the aforementioned software components will take place through hardware owned and operated by the customer (for the Customer component) or provided by the restaurant in all other cases.\\
+Interfaces between the components will utilise standard web technologies and practices as described in \gref{sec:Interfaces}.
+
+\subsection{Functions} \label{subsec:Functions}
+
+System functions are discussed generally in \gref{subsec:Context} and specifically in \gref{sec:Functional}
+
+\subsection{User Characteristics} \label{subsec:Characteristics}
+Expanding on the user groups defined in \gref{subsec:Context}, their use of the system can be further defined as follows:
+
+\begin{enumerate}
+\item \textbf{Waiting Staff} \\This group will interact with the system through a mobile wireless device, most likely in the form of a tablet computer. Each member of the group will have a device. Given the number of staff members varies by restaurant, the size of this group is unknown; however it is not expected for there to be any more than 20 such people at any given time. This group consists only of Waiting staff who are working at the time in question.\\
+\\
+It is expected that with their regular usage this group will become familiar with the system's interface design (the Waiting component particularly), its functionality and limitations. As such the Waiting component can rely more heavily on implicit knowledge, making it more efficient to use through a simpler interface.\\
+There is a distinct possibility that certain aspects of the interface could be operated without looking at it given enough experience, and the design will aim to maximise this possibility.\\
+Using the system both on a regular basis multiple times a day and in relation to employment, this group likely place ease of use and functionality significantly higher than visual aesthetics. They likely do not want to enjoy the interface per se, rather they want it to be second nature and make no investment - physical or mental - in its operation.
+
+
+\item \textbf{Kitchen Staff}\\
+The kitchen staff also will make regular usage of the system multiple times a day in their employment. However their requirements are subtly different. In the potentially hectic and high-pressure environment of a kitchen, the interface (Kitchen component) must require a minimal amount of time and thought to operate. The aesthetics must also be carefully considered in order to convey as much information as possible without requiring appreciable concentration - it should work well with only glances from the staff.\\
+While implicit knowledge can be assumed through experience, 'blind' operation will likely not feature due to the changing nature of the information being displayed.\\ 
+\\
+This group will utilise a number of touch-screen devices of a size roughly according to an average desktop PC monitor. These will be installed in the kitchen itself in fixed locations, and may be shared amongst members. As such the size of kitchen is the determining factor rather than the number of staff. An amount from 1 to 5 would be considered normal, with anything up to 10 devices being reasonably expected.
+
+
+\item \textbf{Customers}\\
+Unlike other groups, the customers will not make regular usage of the system, and will not likely use it constantly throughout the day. As such they likely place a relatively high value on the aesthetics and enjoyment from using the system, and are willing to sacrifice some aspects of usability or functionality. That is not to say those aspects can be neglected.\\
+As a consequence, customers will require much more prompting and signposting from the system to help formalise their intent. Given their intermittent usage, customers will willingly pay more attention to the interface and afford more deliberation in their actions. This reduces the requirement for a slick and intuitive interface relative to the Kitchen and Waiting staff members.
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%% Start of Functional Requirements %%%%%%%%%%%%%
+
+
+
+
+\section{Functional Requirements} \label{sec:Functional}
+
+\begin{enumerate}[label=F-UR-\arabic*, series=functional]
+
+\itempar \label{req:PlaceOrder}Allow waiting staff member to place customers' orders\\
+Priority: Variable\\
+Highest Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+
+\begin{enumerate}[label*=.\arabic*]
+\itempar \label{req:EnterID}Allow staff member to enter unique identification\\
+\underline{\smash{Priority: Must Have}}\\
+The system will accept from the staff member 1 or more pieces of information that will allow the order to be uniquely identified by both staff member and customer. These details will be some combination of:
+\begin{itemize}
+\item Any part of the customer's name. Forename, surname, nick-name, pen name and similar are all acceptable.
+\item Group Number. A number determined by the restaurant to group relevant orders together. For example, using a table number allows multiple separate orders by different people to be logically grouped.
+\item Unique Order Number. A number specific and unique to the order to which it is assigned. This is the only detail allowed to be used by itself.
+\end{itemize}
+The unique ID should be easily memorable by the customer. It is preferred if the customer has some reference to the Group Number or Unique Order Number eg. Number marked on the table.
+
+\itempar \label{req:getMenu}Present staff member with restaurant menu\\
+\underline{\smash{Priority: Must Have}}\\
+Show to the staff member the menu of the restaurant in a hierarchical manner.\\
+The position of elements displayed to the person should be consistent for any number of orders where the menu hierarchy has not been modified, and for any location in that hierarchy.
+
+\itempar Allow staff member to navigate the menu and select an item\\
+\underline{\smash{Priority: Must Have}}\\
+The staff member must be able to navigate the menu hierarchy in an arbitrary order, able to revisit and/or return to a previous location in the hierarchy.\\
+They must also be able to select any item from the menu, and to return to the menu from that selection. The location in the menu they return to should be the same location from which they made the selection.
+
+\itempar \label{req:OrderRequests}Allow staff member to record arbitrary details regarding selected item\\
+\underline{\smash{Priority: Must Have}}\\
+After selecting an item, the person must be able to record any arbitrary requests made by the customer regarding the item. This may include, but is not limited to: 
+\begin{itemize}
+\item Requests to omit items (eg remove cheese from a burger)
+\item Requests to add or substitute items (eg swap chips for curly fries)
+\item Acknowledgement of dietary or allergy requirements (eg peanut allergy)
+\item Selection from options listed on menu (eg cake with choice of custard or ice cream)
+\end{itemize}
+It must also be possible to record the amount of said item to be ordered. Where some arbitrary detail/request has been recorded, for example to omit cheese, that detail should be applied to \textbf{all} of the items specified by the amount recorded. So for example if the request "No cheese" and the amount "5" are recorded for an item "burger", the order should consist of 5 burgers of which \textbf{none} have cheese.
+
+\itempar \label{req:ConfirmOrder}Forming and placing order for fulfilment\\
+\underline{\smash{Priority: Must Have}}\\
+The staff member must be able to select and record details for a number of different items and have the system remember all previous selections and their details. Additionally they must be able to view this list of selections (defined as an order), and remove items from it.\\
+They must be able to place this order for fulfilment, such that information recorded by the system is displayed pursuant to \autoref{req:KitchenDisplay}.\\
+The exact number of items an order may contain is specified in \autoref{per:OrderSize}.
+
+\itempar \label{req:AutoGroup}Automatically grouping items in an order\\
+\underline{\smash{Priority: Could Have}}\\
+The system could automatically group certain menu items together in the order and show these groups as part of \autoref{req:KitchenDisplay}, with the aim of all the items in a group being complete and delivered to the customer at approximately the same time. For example, it could group starters, mains, and desserts into separate groups such that each group is individually prepared and served sequentially.
+
+\itempar \label{req:ManualGroup}Specify item groupings in an order\\
+\underline{\smash{Priority: Should Have}}\\
+Similar to \autoref{req:AutoGroup} and in addition to \autoref{req:OrderRequests} above, the system should separately and explicitly record groupings of items within an order. Any specified grouping must override any automatic grouping that may otherwise be made by the system under \autoref{req:AutoGroup}.
+\end{enumerate}
+
+
+\itempar \label{req:AmendOrders}Allow waiting staff to amend existing orders\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+\begin{enumerate}[label*=.\arabic*]
+\itempar \label{req:RetrieveOrder}Retrieve order details\\
+The system must request the unique identification details entered as part of \autoref{req:EnterID} from the user.\\
+If these details are invalid, the system must notify the user and prompt again for input.\\
+There is no expectation for the system to check if the details refer to the intended order.\\
+\\
+Once a valid (but not necessarily 'correct') set of ID details has been received, the system must display the details of the order (to which the entered ID details refer) to the user. The system is not required to display all stored information regarding the order, only that which is considered pertinent.
+
+\itempar Amend or Remove order details\\
+With an order being displayed to the user, they must be able to select any item in the order and change any associated details recorded as part of \autoref{req:OrderRequests}.\\
+The user must also have the ability to remove any number of items from an order.\\
+The system will also provide functionality to remove the entire order from the system.\\
+The waiting staff member may remove an order marked complete under \autoref{req:OrderReady}, but may not modify its details. 
+
+
+\itempar \label{req:ConfirmAmendment}Confirm amended order\\
+Once the user has finished modifying the order (including removing it entirely) this change in information must be propagated through the system, and specifically notify the Kitchen staff as per \autoref{req:KitchenNotifications}.
+\end{enumerate}
+
+\itempar \label{req:KitchenDisplay}Display state of orders to Kitchen Staff\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+\begin{enumerate}[label*=.\arabic*]
+\itempar Display all unfulfilled orders\\
+The system must produce a complete list of all orders placed under \autoref{req:PlaceOrder} for display to Kitchen Staff with regards to \autoref{use:KitchenDisplay} and any other relevant requirements.
+All relevant information for an order must be displayed. This should be as a collection of menu items, and must include any requests made in accordance with \autoref{req:OrderRequests}.
+
+\itempar \label{req:KitchenNotifications}Notify of amendments to orders\\
+The system must explicitly draw the attention of any Kitchen staff to changes in the order state which result from actions taken under \autoref{req:AmendOrders}. This includes where entire orders have been removed from the system.
+\end{enumerate}
+
+\itempar \label{req:KitchenInfo}Add or Update order information from Kitchen\\
+Priority: Variable\\
+Highest Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+
+\begin{enumerate}[label*=.\arabic*]
+\itempar Provide an estimate of time to complete an order\\
+\underline{\smash{Priority: Must Have}}\\
+The system must allow Kitchen staff to provide an estimate of the time required to complete preparation of an entire order. This must be recorded by ROSS and made available for users to view as part of \autoref{req:RetrieveOrder}.\\
+The system must also allow for this estimate to be changed at any time.
+
+\itempar \label{req:OrderReady}Mark an order as complete\\
+\underline{\smash{Priority: Must Have}}\\
+Kitchen staff must be able to mark an order as complete within the system, after which it cannot be amended - though it must be able to be removed from the system.
+
+\itempar Provide an estimate of time to complete an individual item\\
+\underline{\smash{Priority: Should Have}}\\
+The system should allow Kitchen staff to specify an estimated preparation time for each individual item in an order, and have these individual timings displayed as part of \autoref{req:RetrieveOrder}. From these estimates the system should derive an overall estimate for the entire order.\\
+The system must also allow for these estimates to be changed at any time if made.
+
+\end{enumerate}
+
+\itempar Kitchen staff can acknowledge information changes\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+
+\begin{enumerate}[label*=.\arabic*]
+
+\itempar Kitchen staff can acknowledge order amendments\\
+With respect to \autoref{req:KitchenNotifications}, kitchen staff may (but are not required to) acknowledge amendments to orders. Where an amendment is acknowledged the interface must display the modified order in the same manner as any other order which is in the same state. For example, if an order currently being prepared is amended the acknowledgement should cause it to be represented in the same manner as other in-progress orders. Likewise for orders awaiting preparation, and any other states that may occur.\\
+This requirement does \textbf{not} include where orders have been cancelled/removed form the system. See \autoref{use:AckCancellation}.
+
+\itempar \label{use:AckCancellation} Kitchen staff must acknowledge order cancellations\\
+With respect to \autoref{req:KitchenNotifications}, kitchen staff \textbf{must} acknowledge any order which has been cancelled. Until this acknowledgement the interface must continue to draw attention to the cancelled order. Only after this acknowledgement is received may the system consider the order cancellation completed and act accordingly.
+
+\end{enumerate}
+
+\itempar Allow kitchen staff to remove orders\\
+Priority: Could Have\\
+Source: Tommy Lamb\\
+\begin{enumerate}[label*=.\arabic*]
+\itempar Remove order from system\\
+The system could allow kitchen staff members to cancel an order, removing it from the list of unfulfilled orders in the system.\\
+The system should record a reason for the cancellation as provided by the kitchen staff member cancelling the order.
+
+\itempar Notify Waiting staff member of cancellation\\
+When an order is cancelled by the kitchen, the system should notify at least one member (and preferably only one) of the waiting staff who can relay this information to the customer in a personable manner.
+\end{enumerate}
+
+\itempar \label{req:CustomerStatus}Allow customer to view order status\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+
+\begin{enumerate}[label*=.\arabic*]
+
+\itempar Retrieve order details for customer\\
+This should function in the same manner as \autoref{req:RetrieveOrder}, without specifying that the user interface be the same.\\
+This requirement need not show the same details as \autoref{req:RetrieveOrder}, only those details considered relevant to the customer.\\
+The minimal set of details that must be shown are:
+\begin{itemize}
+\item Items ordered, alongside any specific requests made under \autoref{req:OrderRequests}.
+\item Estimated preparation times as recorded under \autoref{req:KitchenInfo}.
+\item If the order has been marked complete by the kitchen as under \autoref{req:KitchenInfo}.
+\end{itemize}
+
+\end{enumerate}
+
+\itempar \label{req:CustomerOrdering}Allow customer to make, amend, and remove orders\\
+Priority: Could Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+\begin{enumerate}[label*=.\arabic*]
+
+\itempar Customer placing an order\\
+This would execute in the same manner as \autoref{req:PlaceOrder}. However the specific implementation of those requirements (including User Interface elements) should be considerably different, respecting the differing user needs outlined in \gref{subsec:Characteristics}
+
+
+\itempar Customer amending or removing an order\\
+This would execute in the same manner as \autoref{req:AmendOrders}. However the specific implementation of those requirements (including User Interface elements) should be considerably different, respecting the differing user needs outlined in \gref{subsec:Characteristics}
+\end{enumerate}
+
+\itempar Generate report based on previous, fulfilled orders\\
+Priority: Could Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}\\
+The system could generate reports based on the orders made through ROSS for use by restaurant management in business decisions. The exact form or usage of these reports is unspecified.
+
+\itempar Intelligent recommendation system for order items\\
+Priority: Will Not\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}\\
+ROSS will not implement functionality to display to a user recommendations for items to add to the order being made or amended.
+\end{enumerate}
+
+
+
+
+%%%%%%%%%%%%% End of Functional Requirements %%%%%%%%%%%%%
+
+
+
+\section{Usability Requirements} \label{sec:Usability}
+
+\begin{enumerate}[label=NF-UR-\arabic*, series=nonfunctional]
+
+\itempar Quick for waiting staff to enter orders\\
+Priority: Variable\\
+Highest Priority: Must Have\\
+Source: Tommy Lamb\\
+\begin{enumerate}[label*=.\arabic*]
+
+\itempar \label{use:1MinuteOrder}Single item orders must take no more than 1 minute\\
+\underline{\smash {Priority: Must Have}}\\
+From start to finish, it must be possible to take less than 1 minute for a member of waiting staff to record a single item as part of an order. This time does not include recording any specific requests under \autoref{req:OrderRequests}, nor any time taken for the order to be propagated through the system (eg passing the order to the server component). This does include entering unique information (\autoref{req:EnterID}), but not generating the information (eg asking the customer their name).\\
+\\
+This requirement does not stipulate that all such orders must take less than 1 minute, only that it is feasibly achievable with the User Interface being used.\\
+The requirement also makes no specification for the experience of the staff member. It is acceptable for the staff member in question to be experienced both in using the interface and menu structure in meeting this requirement.\\
+Reasonable accommodation should be made for the complexity of ID information being entered and the size/complexity of the menu.
+
+
+\itempar Single item orders should take no more than 30 seconds\\
+\underline{\smash{Priority: Should Have}}\\
+The same conditions as \autoref{use:1MinuteOrder}, except that the process should take no longer than 30 seconds. In meeting this requirement consideration must be made for the size and complexity of menu. It may not be (and is not expected) that all items in the menu could be used in meeting this requirement. Likewise a certain level of experience may be required in meeting this requirement.
+
+\end{enumerate}
+
+\itempar Menu information must be up to date\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:getMenu}, the menu information displayed by the system should represent the menu at that time. The menu information must not be outdated (but may become outdated in the time it is being displayed to the user).
+
+\itempar Orders placed must be validated\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:ConfirmOrder} and \autoref{req:ConfirmAmendment}, any orders or amendments recorded by the system must be confirmed to be valid. Where it is invalid, the system must notify the user.
+
+\itempar Kitchen estimates should be quick to enter\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:KitchenInfo}, it must take no longer than 30 seconds to enter a time estimate or mark an order as complete. The user must be able to complete this task using their non-dominant hand. The criteria must also be met if the user is using their dominant hand. In either case, the task must be completable using only a single hand, not both.\\
+This does not include the time taken to come up with the estimate or to realise the order is ready, only the time to register the information in the system.\\
+This does not preclude a user using two hands to operate the system, just that it must be fully operable using a single hand.
+
+\itempar Kitchen estimates are not required by system\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+While the system must support preparation time estimates as per \autoref{req:KitchenInfo}, the system should also cope with orders which have no estimate provided. This should hold true for the entire life-cycle of an order, from when it is first placed through to completion and including any modifications. When displaying order details as per \autoref{req:RetrieveOrder}, a meaningful message must be displayed (if pertinent) regarding the lack of estimate. This applies particularly to \autoref{req:CustomerStatus}.
+
+\itempar \label{use:KitchenDisplay}Kitchen displays must be easily read\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+
+\begin{enumerate}[label*=.\arabic*]
+\itempar \label{use:DisplayDistance}Displays understandable from a distance\\
+With respect to \autoref{req:KitchenDisplay}, all information displayed (in whatever form that may take) must be understandable by a user from a distance of at least 150 centimetres. The user is assumed to have good vision (does not require corrective lenses) and an unobstructed view of the interface. It is also assumed they are familiar with the interface and can therefore recognise certain graphical elements eg. symbols, colour coding.
+
+\itempar Displays must support wide viewing angles\\
+With respect to \autoref{req:KitchenDisplay}, any hardware used to display visually the information must support wide viewing angles in both the horizontal and vertical planes. Standard display technologies such as LCD are expected to suffice for this requirement.
+
+\itempar Displays easy to understand and unambiguous\\
+With respect to \autoref{req:KitchenDisplay}, a user must be able to understand any \textbf{single} piece of information being displayed within 5 seconds. They must have understood the information well enough to accurately relay it to another person at least 5 seconds after viewing the display.\\
+The user is assumed to have a view of the display meeting the assumptions and constraints of \autoref{use:DisplayDistance}. This includes interface experience.
+\end{enumerate}
+
+\itempar Kitchen interface must not rely on audio cues\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:KitchenDisplay}, no piece of information should be solely communicated to users through sound of any sort. This does not preclude the use of audible cues within the interface, but any such cue must be used in combination with a visual element of some description.
+
+\itempar Kitchen interface should not make unnecessary notifications\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:KitchenNotifications}, the system is only required to draw attention to amended or cancelled orders for which it has reason to believe the kitchen has actively begun preparation of any item within it. Any order which the system does not believe is being prepared currently does not have to have a notification of any sort when amended or cancelled. 
+
+\itempar Order status must remain up to date\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+With respect to \autoref{req:RetrieveOrder}, the information displayed to the user must reflect the most recent information held in the system. Any changes in the information as held by the system must be reflected in the interface within 2 minutes of the change occurring.\\
+This time does not include any delays caused by technical issues, such as those which may affect communication between the various system components. Rather this reflects a normal operating environment.
+
+\itempar Customer interface cannot require training\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+For any functionality involving a customer (the group as defined in \gref{subsec:Context}), the interface must be fully usable without training or instruction external to the interface itself. In other words, the customer must be able to execute any function of the system given the interface and no other information.\\
+It is assumed however that the customer in question has awareness of the context of usage, and a basic level of technological competence. Explicitly, an inability to use a standard web browser (or similar event) would not count has a failure against this requirement, even though it is part of the overall interface.
+
+\itempar Customers do not require an account to view order status\\
+Priority: Should Have\\
+Source: Craig Duffy\\
+A customer should not be required to register details with the restaurant in order to view the details of their order. This does not preclude asking for the unique order ID under \autoref{req:EnterID}, however any information entered must not be indefinitely stored.\\
+This requirement explicitly does not apply to \autoref{req:CustomerOrdering}.
+
+\end{enumerate}
+
+\section{Performance Requirements} \label{sec:Performance}
+
+\begin{enumerate}[resume*=nonfunctional]
+\itempar ROSS must handle at least 500 orders an hour\\
+Priority: Must Have\\
+Source: Craig Duffy\\
+ROSS must be able to handle anything up to and including 500 orders being placed for each and every continuous hour of operation without error.\\
+This requirement does not preclude the system failing due to an excess number of orders in a period of time shorter than one hour.
+
+
+\itempar ROSS must be capable of handling 10 orders in one minute\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The system must have the capability to handle at least 10 orders being placed within one minute without error. This does not require that 10 orders be handled every minute for the duration of operation, rather that within one minute of \textbf{independent} operation 10 orders could be handled. It is acceptable that conditions preceding the minute in question prevent 10 orders being processed without error.\\
+It is acceptable for the system to fail should more than 10 orders be placed within one minute.
+
+\itempar Orders must be propagated quickly\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The system must be able to fully propagate a new order or amendment to an existing order through all components within 1 minute of confirmation. Explicitly, any capable component must be able to display to a user the details of the order within 1 minute of confirmation.\\
+Confirmation here refers to the completion of \autoref{req:ConfirmAmendment} or \autoref{req:ConfirmOrder}.
+
+\itempar \label{per:OrderSize} System must support orders up to 100 items\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The system must support the placement of orders consisting of up to (but not including) 100 items. The order may contain any combination of unique or duplicate items, which may or may not have specific requests made under \autoref{req:OrderRequests}. The value of 100 does \textbf{not} include any amounts specified under \autoref{req:OrderRequests}. As such the order may request more than 100 portions of food or drink from the kitchen when the order as entered into the system does not list more than 100 items.\\
+This is a technical requirement placed on the system and does not preclude a lower operational limit being imposed by the restaurant.
+
+\end{enumerate}
+
+
+\section{System Interfaces} \label{sec:Interfaces}
+
+See also requirements specified under \gref{sec:Usability}.
+
+\begin{enumerate}[resume*=nonfunctional]
+
+\itempar Intercomponent communication must use web standards\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+In communicating between components, with the exception of between the server and database components, HTTP and underlying networking standards must be used. These may include, but are not limited to:
+\begin{itemize}
+\item Ethernet
+\item 802.11 (commonly called Wi-Fi)
+\item IPv4 / IPv6
+\item TCP / UDP
+\end{itemize} 
+In addition to this, the usage of HTTP must be through standard protocols and practices.\\
+The precise form of data being transferred should be some combination of the following, complying with W3C standards:
+\begin{itemize}
+\item HTML
+\item CSS
+\item JavaScript
+\item JSON
+\end{itemize}
+Communication between server and database components should be carried out using the best available standard compatible with the specific database implementation. For example (which is non-binding), SQL.\\
+The exact versions of any technology listed here is explicitly unspecified at this time.\\
+The mandated use of these standards does not preclude the use of non-standard software, where that software itself conforms to or makes use of these standards. For example, JavaScript libraries or What-You-See-Is-What-You-Get editors.
+
+\itempar Human-Computer interfaces must be touchscreen compatible\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The hardware interface between Kitchen, Waiting, and Customer components and their users must be fully compatible with touchscreen technology. Any and all functionality or features of these components should be accessible through a touch screen interface.\\
+This does not preclude the potential use of other Human-Computer interface technologies, such as a mouse and keyboard.
+
+\itempar Hardware-Software interfaces should be through standard web browsers and operating systems\\
+Priority: Should Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}\\
+With the exception of Server and Database components, all components should operate on their hardware and be fully functional through any of the following browsers:
+\begin{itemize}
+\item Google Chrome
+\item Mozilla Firefox
+\item Apple Safari
+\item Microsoft Edge
+\end{itemize}
+Additionally those components which run on browsers should be fully functional on any of the following operating systems:
+\begin{itemize}
+\item Microsoft Windows
+\item Apple MacOS
+\item Apple iOS
+\item Android
+\item Certain Linux Distributions, including
+\subitem Ubuntu
+\subitem CentOS
+\end{itemize}
+No specification is made for what hardware the system should operate on, as this is considered in the domain of the operating system being used.
+
+
+\end{enumerate}
+
+
+\section{System operations} \label{sec:Operations}
+
+\subsection{Human System Integration Requirements} \label{subsec:HSI}
+
+No specific requirements are made under this section. Other requirements relevant to Human-System integration may be found in \gref{sec:Interfaces} and \gref{sec:Usability}.
+
+\subsection{Maintainability} \label{subsec:Maintainability}
+
+\begin{enumerate}[resume*=nonfunctional]
+
+\itempar Standard components should be easily maintained\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+Those components of the system which have not been specifically designed or implemented as part of this project should be reasonably maintainable by a single person who has appropriate domain-specific knowledge and experience. Certain issues may arise with which the person requires assistance from an outside party. This requirement does not preclude that possibility, nor is this requirement considered unmet under such circumstances. It is only required that such a person be able to maintain the specified components to a reasonable degree.\\
+The components to which this requirement applies include, but are not necessarily limited to:
+\begin{itemize}
+\item Operating System Software
+\item Device drivers
+\item All hardware owned and operated by the restaurant, including
+	\subitem Waiting staff devices
+	\subitem Kitchen devices
+	\subitem The server hardware
+	\subitem Networking hardware
+\item Web server software
+\end{itemize}
+This requirement explicitly does not apply to bespoke software written as part of this project.
+
+\itempar Bespoke software components should be highly independent\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+All bespoke software components written as part of this project should be designed and implemented in a way which minimises coupling between components. As a consequence, most maintenance of those software components should be able to be carried out in isolation without interfering with other components.
+\end{enumerate}
+
+\subsection{Reliability} \label{subsec:Reliability}
+
+No specific requirements are made under this section. Related requirements may be found under \gref{sec:Performance}.
+
+\section{Physical Characteristics}
+
+\subsection{Physical Requirements}
+
+\begin{enumerate}[resume*=nonfunctional]
+\itempar Mobile hardware components should be light\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+Any mobile hardware operated by the restaurant as part of this system must not weigh more than 1 kilogram. Mobile here refers to any hardware which is intended to carried regularly by any user.
+\end{enumerate}
+
+\subsection{Adaptability Requirements}
+
+\begin{enumerate}[resume*=nonfunctional]
+\itempar Easy to add new component instances\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The system must be designed to make it as easy as possible to add new component instances. For example, increasing the number of Waiting staff components, or displays in the kitchen.
+\end{enumerate}
+
+\section{Environmental Conditions}
+
+\begin{enumerate}[resume*=nonfunctional]
+\itempar Server must be adequately protected\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+The environment in which the server hardware is to be installed must be suitable for sensitive electronic equipment. This necessitates as a minimum:
+\begin{itemize}
+\item Free from liquids and excess humidity
+\item Free from excess dust and other fine particles
+\item Free from combustible materials (including gases) that may be ignited by moderate heat or an electrical charge
+\item Free from or protected against electromagnetic interference
+\item Protection against power supply fluctuations (including power surges)
+\item Free from corrosive materials
+\item Free from children and animals
+\item Free from external vibrations and risk of physical shock
+\item Adequate ventilation
+\end{itemize}
+
+\itempar Kitchen hardware should operate under hazardous conditions\\
+Priority: Should Have\\
+Source: Tommy Lamb\\
+Hardware used in the kitchen must be able to operate fully for prolonged periods in any combination of the following conditions:
+\begin{itemize}
+\item High temperatures
+\item Moderate levels of airborne particles
+\item High humidity
+\item Risk of liquid splashes
+\end{itemize}
+
+\itempar Waiting and customer hardware require low electromagnetic interference\\
+Priority: Must have\\
+Source: Tommy Lamb\\
+Due to the wireless nature of communication, the environment for the customers and waiting staff must have low levels of electromagnetic interference to ensure performance. In particular, signal noise in the 2.4GHz, 5GHz and surrounding frequencies must kept to a minimum. This requires only that the communication signal being used be significantly stronger than any other electromagnetic radiation in the stated frequencies. This may be achieved through any balance of increasing signal strength or reducing background radiation.
+
+\end{enumerate}
+
+\section{System Security}
+
+\begin{enumerate}[resume*=nonfunctional]
+\itempar System must not be internet accessible\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+No aspect of the system can be accessible from outside of the restaurant's Local Area Network.\\
+This applies only to the system as installed within a specific restaurant. It explicitly does not apply during any phase of this project prior to installation at a restaurant.
+
+\itempar \label{secure:HardwareLocking}Software components should be hardware locked\\
+Priority: Must Have\\
+Source: Tommy Lamb\\
+Any and all software components of the system designed for use by any staff member should be limited to operating on specific hardware devices. Specifically, the Kitchen and Waiting components should only be accessible through the hardware devices installed in the kitchen and given to waiting staff.\\
+This requirement makes no specification regarding access, physical or otherwise, to these hardware devices.\\
+This also applies only to the system as installed within a specific restaurant. It explicitly does not apply during any phase of this project prior to installation at a restaurant.
+
+\end{enumerate}
+
+\section{Information Management}
+
+No specific requirements are made under this section. Relevant requirements may be found under \gref{sec:Functional} and \gref{sec:Interfaces}
+
+\section{Policies and Regulations}
+
+\begin{enumerate}[resume*=nonfunctional]
+\itempar System must be able to adapt to differing ID representations\\
+Priority: Must Have\\
+Source: \href{http://www.macs.hw.ac.uk/~rpp6/teaching/GroupProject/docs/project/GroupProjectSpec2017.pdf}{"Group Project Specification Document"}
+\\
+With respect to \autoref{req:EnterID}, the system as it is installed in a restaurant needs only to support one form of unique ID during use. This may or may not consist of 1 or more pieces of individual data. The exact form of ID to be used by the system will be specified by the specific restaurant's organisational policies. As the system is to be designed for installation "across [a] diverse range of restaurants" (\cite{Specification}), the system must allow the form of ID used to be specified during installation and setup.\\
+The system does not have to support any arbitrary form of ID specified during installation, but must minimally offer:
+\begin{itemize}
+\item The combination of Table Number and Customer Name.
+\item A System-wide Unique Identification Number (equivalent to an order number)
+\end{itemize}
+This requirement does not apply to any internal representation used by the system, only to how the identity of an order is represented in interacting with any users.
+\end{enumerate}
+
+\section{System Life Cycle Sustainment}
+
+No specific requirements are made under this section at this time.
+
+\section{Packaging, Handling, Shipping, and Transportation}
+
+No specific requirements are made under this section at this time.
+
+\section{Verification}
+
+
+
+
+No specific plans have been made with regards to verification of the system. Suffice to say that extensive testing of software components will take place both individually and as integrated in the system. Additionally testing will take place with mock users, both familiar and unfamiliar with the system, to verify and quantify how those requirements placed on usability and human element interfaces are met.
+
+
+\section{UML Diagrams}
+
+\subsection{Use Case Diagram}
+
+\pagebreak
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=1]{Figures/UseCaseDiagram.png}
+\caption{Use case diagram for the Restaurant Ordering Support System.}
+For clarity and simplicity a one-to-one relationship with specific requirements is not enforced, and specific use cases ignore component boundaries.
+\end{sidewaysfigure}
+
+
+\subsection{Activity Diagrams}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{Figures/RetrieveOrder.png}
+\caption{A sub-activity to retrieve details of a given order.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1]{Figures/UpdateOrderDB.png}
+\caption{A sub-activity to perform an update to an order in the Database component.\newline
+Updates can include adding, amending, or removing an order as well as adding prep. time estimates or marking as complete.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{Figures/CustomerViewDetails.png}
+\caption{The activity diagram for a customer to view their order status.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.55]{Figures/PlaceOrder.png}
+\caption{The activity diagram for entering an order into the system.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.55]{Figures/WaiterAmendOrder.png}
+\caption{The activity diagram representing waiting staff amending an order.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{Figures/KitchenAmendOrder.png}
+\caption{The activity diagram representing kitchen staff amending an order.}
+\end{figure}
+
+\section{Assumptions and Dependencies} \label{subsec:Assumptions}
+
+It is assumed that the restaurant is capable of implementing and maintaining a reliable wireless Local Area Network pursuant to any relevant requirements specified in this document.\\
+It is further assumed that the restaurant has or will have an active wireless Local Area Network implemented for the installation of this system.\\
+\\
+It is assumed that the restaurant has or will have the ability to maintain the server hardware and software - where said software has not been implemented as part of this project - by the end of this project. This may or may not be through a Service-Level Agreement with Buzzword.\\
+As a corollary, no assumptions have been made regarding the maintenance of any bespoke software written for this project - primarily the 5 components mentioned in \gref{sec:Scope}.\\
+\\
+It is assumed that the restaurant will take all reasonable steps to manage access to human-system interfaces, and as such little to no security measures must be implemented in this project. Human-system interfaces here refers primarily (but not exclusively) to the hardware devices to which \autoref{secure:HardwareLocking} applies. That is those hardware devices through which access-limited software components can be accessed. For example, the devices carried by waiting staff.
+
+\section{Definition of Terms}
+\vspace{1cm}
+
+\begin{tabulary}{1.2\textwidth}{l L}
+Term & Definition \\ \midrule
+
+Server & The hardware and software environment which will provide copies of the Kitchen, Waiting, and Customer components to connected client devices. Also provides the hardware and software for execution of the Server and Database components.\newline Server does \textbf{not} refer to a waiter, waitress, or other member of staff. \\ \midrule
+Client device & The device being used to interact with the system. This will be the computer used by Kitchen staff, mobile or tablet device used by waiting staff, and any customer's device which has received the Customer component of the system from the server.\\ \midrule
+Local Area Network (LAN) & The collection of computer networking devices within the restaurant's premises. \\ \midrule
+Prep. & Short for Preparation. In the context of the phrase "prep. time" it refers to the time taken from starting to prepare the order/item (depending on usage) to being completed.
+\end{tabulary}
+\chapter{Risk Analysis}
+
+\pagebreak
+\minitoc
+\pagebreak
+
+\section{Risk Identification} \label{sec:riskID}
+\subsection{Background}
+Risk identification is the initial stage of the process. It looks to identify any possible risks that may come up during the project. We identified 4 different categories of risk that may come up.
+
+\begin{enumerate}
+	\item 
+	{\bfseries People Risks: } Risks linked to members of the project team.
+	\item 
+	{\bfseries Technology Risks: } Risks applied to the work tools used to help create the system.
+	\item 
+	{\bfseries Knowledge Risks: } Risks related to the background knowledge of the team members.
+	\item 
+	{\bfseries Project Risks: } Risks related to the project itself.
+	
+\end{enumerate}
+
+\subsection{Documentation}
+
+		
+	\begin{tabular}{ |c|c|c|c| }
+		\hline
+		\textbf{Risk ID} & \textbf{Risk} & \textbf{Type} & \textbf{Strategy Type} \\
+		\hline
+		RK1 & Team member drops out & People & Contingency \\
+		\hline
+		RK2 & Bereavement & People & Contingency \\
+		\hline
+		RK3 & Coursework for other modules & People & Avoidance \\
+		\hline
+		RK4 & GitHub being unavailable & Technology & Contingency \\
+		\hline
+		RK5 & Team Members being unavailable & People & Minimisation \\
+		\hline
+		RK6 & Equipment/server crash & Technology & Contingency \\
+		\hline
+		RK7 & Project is underestimated & Technology & Avoidance \\
+		&in terms of difficulty&&\\
+		\hline
+		RK8 & Loss of Data & Technology & Contingency \\
+		\hline
+		RK9 & Lack of Communication & People & Avoidance \\
+		\hline
+		RK10 & Members unfamiliar with aspects & Knowledge & Minimisation  \\
+		\hline
+		RK11 & Team Members not doing fair share & People & Avoidance \\
+		\hline
+		RK12 & Changes to Project Specification & Project & Contingency \\
+		\hline
+	\end{tabular}
+
+
+\section{Risk Analysis}
+
+\subsection{Background}
+
+After we identified all the possible risks to our project, analysis of each risk can be done. Each risk can be grouped into their {\bfseries probability} and {\bfseries impact}.\\
+
+\noindent {\bfseries Probability} is measured by the following terms: High, Medium and Low.\\
+
+\noindent {\bfseries Impact} is also measured by the following terms: High, Medium and Low.\\
+
+\subsection{Documentation}
+
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	\textbf{Risk ID} & \textbf{Risk} & \textbf{Probability} & \textbf{Impact} \\
+	\hline
+	RK1 & Team member drops out & Low & High \\
+	\hline
+	RK2 & Bereavement & Medium & Medium \\
+	\hline
+	RK3 & Coursework for other modules & High & Medium \\
+	\hline
+	RK4 & GitHub being unavailable & Low & Low \\
+	\hline
+	RK5 & Team members being unavailable & Medium & Low \\
+	\hline
+	RK6 & Equipment/server crash & Low & High \\
+	\hline
+	RK7 & Project is underestimated & Low & Medium \\ 
+	&in terms of difficulty &&\\
+	\hline
+	RK8 & Loss of Data & Low & High \\
+	\hline
+	RK9 & Lack of Communication & Low & Low \\
+	\hline
+	RK10 & Members unfamiliar with aspects & Medium & Medium \\
+	\hline
+	RK11 & Team members not doing fair share & Low & Medium \\
+	\hline
+	RK12 & Changes to Project Specification & Low & High \\
+	\hline
+	
+\end{tabular}
+
+\section{Risk Planning}
+
+\subsection{Background}
+
+After each risk is identified and categorised, appropriate plans can be prepared for each risk.\\
+
+\noindent Each risk is given the most appropriate strategy, so to not waste time selecting which one is best
+
+\subsection{Strategies}
+
+\begin{enumerate}
+	\item 
+	{\bfseries Avoidance: }This strategy is used to reduce the chance of the risk becoming a problem at all.
+	\item 
+	{\bfseries Contingency: }This strategy is based on if the risk becomes a reality, what is the best course of action.
+	\item 
+	{\bfseries Minimisation: }This strategy is used to reduce the overall consequences if the risk becomes a problem.
+\end{enumerate}
+
+\subsection{Documentation}
+	
+\begin{tabular}{l|l}
+	RK1 & {\bfseries Contingency Plan:} The workload is to be spread evenly across all   \\
+	
+	& members, to ensure lost work can easily be caught up on.\\
+	
+	RK2 & {\bfseries Contingency Plan:} The work is to be assigned to other group  \\
+	
+	& members so that no work is lost.\\
+	
+	RK3 & {\bfseries Avoidance Plan:} Everyone should be able to time manage effectively. \\
+	
+	& If too caught up in other courses they should inform the group manager.\\
+	
+	RK4 & {\bfseries Contingency Plan:} Backups should be kept on personal computers  \\ 
+	
+	& so that in the event of servers being down, files can be transferred via  \\
+	
+	& other means e.g. USB Stick.\\
+	
+	RK5 & {\bfseries Minimisation Plan:} Team Members are to let the group manager  \\
+	
+	& know so that work can easily be reassigned and no work is lost.\\
+	
+	RK6 & {\bfseries Contingency Plan:} Work is to be saved regularly so that loss of work  \\
+	
+	& is avoided in the event of any equipment crashing.\\
+	
+	RK7 & {\bfseries Avoidance Plan:} Tasks should be given out to the appropriate team  \\
+	
+	& members. Members should also contact the manager if struggling \\
+	
+	& as soon as possible.\\
+	
+	RK8 & {\bfseries Contingency Plan:} Multiple members should have backups of others  \\
+	
+	& work in case a member loses data. All data should also be kept on \\
+	
+	& GitHub as a centralized back up.\\
+	
+	RK9 & {\bfseries Avoidance Plan:} Regular meetings should be scheduled to ensure all  \\
+	
+	& tasks are being dealt with and all questions are being answered.\\
+	
+	RK10 & {\bfseries Avoidance Plan:} Tasks should only be given to the appropriate team  \\
+	
+	& members to ensure all work is completed correctly. \\
+	
+	RK11 & {\bfseries Avoidance Plan:} Members should regularly upload documents to  \\
+	
+	& GitHub to show progress. The manager should keep members updated  \\
+	
+	& with tasks so they can complete their respective tasks on time.\\
+	
+	RK12 & {\bfseries Minimisation Plan:} Work should be easily changed so that it can  \\
+	
+	& follow the updated to the new specification. No work should be \\
+	
+	& submitted early.\\
+\end{tabular}
+
+
+\chapter{Project Decisions and Plan}
+\nocite{NoRisks}
+
+\pagebreak
+\minitoc
+\pagebreak
+
+\section{Project Decisions}\label{sec:Decisions}
+
+\subsection{High-level system architecture}\label{subsec:architecture}
+
+The system is to be designed as a web application, as per the specification document (\cite{Specification}). As a result the system will consist of 5 main software components to be created, 3 client-side and two server-side. The client-side applications, namely the Waiting, Kitchen, and Customer components are intended to interact only with the Server component and only in a minimal fashion.  It is intended that only communication will be limited to the initial loading of the client application and passing data only as required. For example, the Waiting component is intended to only communicate with the server to request an up-to-date menu, details on a specific order, and to place or amend an order. As much as possible this communication will be through lightweight AJAX and Server-Sent Events.\\
+The server-side components consist of the code required to handle the data transfer between components and the database. The necessity of the database is debatable, but is used to reduce the load on the client devices by providing a central ACID storage location for data. The database also reduces the coupling of components to the data representation across the system whilst easing the addition of possible future functionality. For example, the recording and statistical analysis of orders placed throughout a day/week/month.\\
+\\
+Although designed and implemented as a web application, the system is not intended to be used in any capacity over the internet. In order to ease the development process the system will be internet accessible during that period, with the intent to disallow internet connections when installing the system in a restaurant. This would be achieved through restricting access to local IP addresses through the server and networking equipment.\\
+The reason for this is because the system as specified does not specifically require any over-the-internet features, and doing so massively reduces the security and authentication requirements for the software we are implementing. Without this stipulation, some sort of account management sub-system would need to be implemented to limit access to the Waiting and Kitchen components.
+
+
+\subsubsection{Architecture Diagram}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{Figures/SystemArchitectureDiagram.png}
+\caption{Architectural overview of ROSS.}
+\vspace{1cm}
+\flushleft
+As a web app, the exact number of devices and people connected to the Local Area Network is flexible.\\
+No specification is made as to the Local Area Network topology.
+\end{figure}
+
+\pagebreak
+
+\subsection{Existing software and infrastructure usage}
+
+During the software development phase of the project, the software will be implemented on the existing LAMP server provided to students within the MACS department. This is to remove the need to implement and maintain a server to test on and allow us to focus on the web app itself. The same software stack would be utilised in the final product when installed within a restaurant, though not necessarily the same software versions.\\
+This stack is chosen for its commonness and free open-source nature. This makes it cheap and easy to implement and maintain, especially when the client may not have a sizeable or experienced support system for web technologies.\\
+\\
+In terms of other software incorporated into the product, the decision has been made to use the React JavaScript library in order to ease the development of the User Interface (UI). The library makes it significantly easier to associate functionality and states with specific visual components, bringing JavaScript much closer to an object-orientated paradigm. The library also has functionality to react to changes in state and update the relevant UI elements, implementation specifics of which are not yet fully researched. No explicit plans are made to use any other libraries or frameworks not built-in to technologies used (e.g. the standard built-in PHP library). The project remains open to the potential offered by other libraries which may come up during development. These will be judged on, amongst other things, their ease of incorporation to the existing code base and any advantages they provide in the immediate and long-term future. Specific efforts will be made to avoid incorporating too many libraries and bloating the product with largely unused code.
+
+\subsection{Development technologies}
+
+Whilst each team member is to be allowed to use whatever development environment they desire, specific technologies will be used to facilitate cooperation.\\
+\\
+Git and GitHub will be used to provide strong version control and serve as a backup of all work, both complete and in progress. They also provide excellent tools to manage the integration of multiple peoples' work into a single cohesive unit.\\
+\\
+Documentation is primarily to be written using LaTeX to take full advantage of Git. Since Git cannot work with binary files (for example PDF, DocX), the fullness of its version control cannot be exploited unless a plain-text file format is used. LaTeX is written in plain text, allowing full use of version control. It also has the advantage of automating significant amounts of document formatting, making it easier to produce documentation in parallel and maintain a consistent aesthetic and format. It also makes the merging or documents easier.\\
+\\
+In terms of communication within the team, WhatsApp was decided as the method of choice. This is because email was felt too slow and easily missed, and of the various communication applications out there it was the one most members had in common. For more formal communication within the team and with external parties (such as line manager), email is used. This is because, although slower, email gives a clear record of communication both in attributing statements to people and specifying who received a given message.
+
+\section{Project Plan}
+The project plan carries forward from Stage Two. It was unclear if the specification wished us to include stage one but as this document was produced during this stage it seemed illogical to do so. 
+
+
+\subsection{Stage 2}
+Stage Two is split into three sprints. \\ 
+The first sprint follows on immediately from the submission of this document and lasts till just after exams. During this time it is expected that the core-dev team will set-up the database and server, as well as writing code for the components to talk to the server. The rest of the team will work on company branding and culture to dictate the website design.\\
+The second sprint follows a couple days after that, and spans the holiday period. During this time it is expected that the core-dev team will begin implementing the most important functional requirements while the rest of the team works on the website.\\
+The final sprint follows a couple days after the second sprint, and spans the first few weeks of semester two. During this time it is expected that the core-dev team will work on implementing the rest of the most important functional requirements, and have something to demo at the submission date. Meanwhile, the rest of the team will document the progress so far. \\
+
+Figures begin on the next page.
+
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.25]{Figures/Plan2-1.png}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.25]{Figures/Plan2-2.png}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.3]{Figures/Plan2-3.png}
+\end{sidewaysfigure}
+
+
+\pagebreak
+\subsection{Stage 3}
+Stage three is very briefly planned with only the start and end dates of the sprints outlined.\\ 
+It is unclear how far through the project we will be at this stage so it is best to allow for flexibility. \\
+
+Figures begin on following page.
+
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.45]{Figures/Plan3-4.png}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.45]{Figures/Plan3-5.png}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.45]{Figures/Plan3-6.png}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.3]{Figures/Plan3-7.png}
+\end{sidewaysfigure}
+
+\pagebreak
+
+\section{Definition of Terms}
+\vspace{1cm}
+
+\begin{tabulary}{1.2\textwidth}{l L}
+Term & Definition \\ \midrule
+
+LAMP & Stands for Linux, Apache, MySQL, PHP.\newline A typical, fully open-source software stack for web servers. \\ \midrule
+MACS & Stands for Mathematical and Computer Sciences\newline The phrase "MACS department" is the common-usage name for the School of Mathematical and Computer Sciences within Heriot-Watt University. \\ \midrule
+App & Abbreviation of application.
+\end{tabulary}
+
+\chapter{Project Costing} 
+\pagebreak 
+\minitoc
+\pagebreak
+\section{Hardware} 
+Hardware:
+1.	Assuming we need different type of devices for each one of our software and web developer for testing.
+2.	A customized desktop for kitchen to keep tracking the orders.
+3.	Two monitors for kitchen
+4.	A customized desktop for server
+5.	One monitor for sever
+6.	A POS Receipt Printer for the bill.
+\section{Software} 
+Software:
+Licenses
+2 Operating system
+Antivirus/Security (Business)
+\section{Staff} 
+Staff:
+Hourly rate of pay
+Project Manager			(£35/hour)
+2 Software Developers			(£20/hour)
+UI Designer				(£17/hour)
+Quality assurance staff		(£15/hour)
+Business and Marketing Staff		(£16/hour)
+\section{Training and Support} 
+Initial installation after delivery
+Require both our project manager and software developer.
+Traveling cost.
+Client’s staff training
+Require both our project manager and software developer.
+Traveling cost.
+Maintenance
+First six months free.
+1, 3, 5 year(s) contract after.
+24/7 online support services free
+\section{Reserves} 
+20\% of the total estimate.
+\pagebreak 
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.9]{Figures/Costing.png}
+\end{sidewaysfigure}
+\pagebreak 
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.8]{Figures/CostingBreakdown.png}
+\end{sidewaysfigure}
+
+
+
+
+\chapter{Usability Evaluation of Mock-Ups}
+\pagebreak
+\minitoc
+\pagebreak
+\section{Usability} 
+\subsection{Introduction} 
+This   document   outlines   the   process   we   took   in   creating   and   executing   a   usability testing   plan   for   our   Restaurant   Ordering   Support   System   (ROSS).   Said   testing   was carried   out   with   the   aim   of   identifying   any   flaws   in   our   initial   design   and   to   gather   a rough   idea   of   user   performance   with   the   system.\\
+The   system   is   split   into   3   parts.   There   is   the   app   the   waiter   will   use   to   take   the customer's’   order   through,   the   kitchen   display   for   relaying   the   orders,   and   the   order update   system   providing   an   up-to-date   status   to   the   customer   on   their   order.   The app   will   be   installed   on   a   tablet   available   for   the   waiter   to   use   at   any   table.   The   app will   allow   them   to   input   an   order   and   request   any   necessary   modifications   e.g. those   caused   by   dietary   restrictions.   The   kitchen   display   will   present   a   clear summary   of   the   order   to   the   kitchen   and   will   allow   the   kitchen   staff   to   interact   by providing   an   estimate   on   the   time   it   will   take   for   the   order   to   be   complete.   The order   update   system   will   provide   the   customer   with   a   summary   of   their   order alongside   its   current   status,   as   given   by   the   kitchen   staff.\\
+This   system   is   designed   to   replace   the   current   ordering   system   the   client   has   in place   and   will   be   installed   in   all   their   locations   once   complete.\\
+\subsection{Test Goals} 
+The   objective   is   to   test   the   usability   of   our   ordering   system   and   whether   it   is preferable   to   the   standard   ordering   system   currently   in   place   at   the   restaurants.   We need   to   know   if   the   essential   actions   of   the   system   can   be   carried   out   easily   by various   users   if   the   system   is   to   be   successful.   We   also   aim   to   prove   the   3   following hypotheses:\\
+1. A   mobile   application   is   easy   for   a   waiter   to   place   orders   through.\\
+2. A   kitchen   display   is   easy   for   staff   to   monitor   and   interact   with.\\
+3. Providing   the   customer   with   constant   feedback   on   their   order   leaves   them
+feeling   more   satisfied.\\
+If   all   three   hypotheses   are   proven   true,   then   we   believe   we   have   created   an   ideal system   to   be   placed   into   use   in   all   of   our   clients   restaurants.\\
+\subsection{Participants} 
+We   expect   to   have   between   six   and   eight   participants   in   our   study.   The   subjects should   have   a   range   in   both   age   and   computer   literacy.   We   are   looking   for   varied participants   as   there   is   no   one   type   of   customer   that   may   enter   the   client’s restaurants.   Customers   may   come   from   any   background,   therefore   our   system must   be   easily   usable   by   all.\\
+The   participants   will   be   asked   to   complete   one   questionnaire   before   and   another questionnaire   after   they   have   attempted   to   perform   multiple   tasks   using   the mock-up   UI   of   the   system   we   have   created.   The   participants   will   not   have   any   prior knowledge   as   to   the   workings   of   the   system   other   than   a   quick   briefing   before carrying   out   the   tests,   and   will   have   an   investigator   present   to   answer   any questions   they   may   have,   alongside   providing   any   potential   assistance   required.   All subjects   will   be   required   to   sign   a   consent   form   prior   to   their   participation   in   this study.\\
+\subsection{Experiment Design} 
+Participants   will   be   asked   to   complete   a   series   of   tasks   on   each   part   of   the   system. These   tasks   are   representative   of   what   we   believe   will   be   some   of   the   most common   actions   taken   by   users   once   the   system   has   been   fully   implemented. These   ideas   were   extracted   from   our   requirements   document   to   help   us   identify which   features   to   test   most   strenuously.\\
+However,   our   prototype   is   nothing   more   than   a   shell   user   interface.   Therefore   we cannot   test   certain   requirements   such   as   ‘F-UR-1.5   Forming   and   Placing   Order   for Fulfilment’.   Since   the   three   sections   of   the   system   are   not   interlinking   in   the prototype,   we   cannot   currently   test   the   successful   processing   of   orders   and   their recording   in   the   system.   The   confirmation   of   a   successful   order   would   be   its appearance   in   the   kitchen   display.
+
+
+\subsubsection{Tasks (Wait Staff App)} 
+
+\begin{enumerate} 
+\item Navigate   to   the   main   course   menu.
+\item Add   ‘Spaghetti   Bolognese’   to   the   order.
+\item Add   ‘Ice   Cream’   to   the   order   with   amendment   ‘Extra   Scoop’.
+\item Find   what   soft   drinks   are   for   sale.
+\item Place   the   order/check   out.
+\end{enumerate} 
+
+
+\subsubsection{Tasks (Kitchen Display)} 
+
+\begin{enumerate} 
+\item Check   status   of   table   2.
+\end{enumerate} 
+
+
+\subsubsection{Tasks (Customer Feedback Display)} 
+
+\begin{enumerate} 
+\item Enter an Order Reference.
+\item Check Order Status.
+\item Summon Waiter to request amendment to an order.
+\end{enumerate} 
+
+
+\subsection{Findings} 
+There were five (5) participants in this study.
+
+
+\subsubsection{Pre-questionnaire Results} 
+
+\begin{enumerate} 
+\item ~\\ %How often do you visit a restaurant? \\ \\
+\begin{tabulary}{\textwidth}{ L c }
+\multicolumn{2}{ l }{How often do you visit a restaurant?}\\ \midrule
+Daily & 0 \\ \midrule
+Few times a week & 1 \\ \midrule
+Once a week & 2 \\ \midrule
+Once a month & 2 \\ \midrule
+never & 0 \\ \bottomrule
+\end{tabulary}
+
+\item Have you ever had difficulty placing an order in a restaurant? \\ 80\% No, 20\% Yes
+\item What common issues have you come across in restaurants? 
+\begin{itemize} 
+\item Poor Service
+\item Slow service bringing food. Taking a long time to bring the bill.
+\item Rude Staff. Long Waits.
+\item Bad service and bad food.
+\item Forgetting parts of orders. 
+\end{itemize} 
+\item Have you ever ordered food online through a website or an app?\\
+Yes 100\%
+\item ~\\
+\begin{tabulary}{\textwidth}{ L c }
+\multicolumn{2}{ l }{Did you mostly enjoy the service?}\\ \midrule
+Yes & 3 \\ \midrule
+Mostly & 1 \\ \midrule
+No & 1 \\ \bottomrule
+\end{tabulary}
+\item{What didn't you enjoy about the experience?} 
+\begin{itemize} 
+\item The wait.
+\item Slow Delivery. 
+\item No way to know order has been prepared correctly until it arrives.
+\item Long delivery times
+\item Lack of information about the food
+\end{itemize} 
+\item Do you prefer making purchases face-to-face or online?
+\begin{itemize} 
+\item I enjoy both
+\item Face-to-Face as you can ask questions, it is usually quicker. Makes the experience more enjoyable (sometimes).
+\item Face-to-Face
+\item Both are fine.
+\item Online 
+\end{itemize} 
+\end{enumerate} 
+\subsubsection{Test Results} 
+\begin{enumerate} 
+\item Navigate to the Main Course Menu. \\
+All Participants managed this task without issue.
+\item Add 'Spaghetti Bolognese' to the order. \\ 
+All Participants managed this task without issue.
+\item Add 'Ice Cream' to the order with amendment 'Extra Scoop'. \\ 
+A couple of participants hesitated as they were unsure whether to enter the amendment in the text box before or after they selected the item.
+\item Find what soft drinks are for sale.\\
+All Participants managed this task without issue.
+\item Place the order/ check-out.\\ 
+Some participants took a few seconds to find the checkout button but all participants completed the task.
+\item Check status of table 2.\\
+Lots of uncertainty on what could actually be done and what was on the display with only one participant correctly pressing the status button on the first attempt.
+\item Enter an Order Reference \\
+Confusion at the appearance of the order reference. However, all participants were able to identify the correct steps to take.
+\item Check Order Status \\
+Mostly understood, some were unhappy with the lack of clarity in the summary.
+\item Summon waiter to request amendment to the order.\\
+All participants managed this without an issue. 
+\end{enumerate} 
+
+
+\subsubsection{Post-Questionnaire Results} 
+
+\begin{enumerate} 
+\item How each participant (A - E) Rated Their Experience \\ \includegraphics[scale = 0.5]{Figures/PQ1.png} 
+
+\item Did you find the system intutitive to use? (i.e. Did all items appear under the correct headings/ menus you expected them to?) \\
+
+\begin{tabulary}{\textwidth}{ L c}
+\toprule
+Extremely Intuitive & 0 \\ 
+Very Intuitive & 0 \\ 
+Somewhat Intuitive & 3 \\ 
+Not Very Intuitive & 2 \\ 
+Not at all intuitive & 0 \\ \bottomrule
+\end{tabulary}
+\vspace{1cm}
+
+\item  
+\begin{tabulary}{\textwidth}{L c}
+\multicolumn{2}{ l }{Did you find yourself relying on the investigator to help often?}\\ \midrule
+Very Often & 1 \\ 
+Quite often & 2 \\ 
+Occasionally  & 1 \\ 
+Rarely & 1 \\ 
+Never & 0 \\ \bottomrule
+\end{tabulary}
+\vspace{1cm}
+
+\item  
+\begin{tabulary}{\textwidth}{ L c}
+\multicolumn{2}{l}{Are you satisfied with the look of the system?} \\ \midrule
+Extremely Satisfied & 0 \\ 
+Very Satisfied & 0 \\ 
+Somewhat Satisfied & 2 \\ 
+Not Very Satisfied & 2 \\ 
+Not at all Satisfied & 1 \\ \bottomrule
+\end{tabulary}
+~\\
+
+\item Would you like to use a system like this one in a restaurant? \\
+\begin{itemize} 
+\item Yes, it appeared fairly straightforward.
+\item I would if it was programmed correctly and everything was visible + simple to use.
+\item Not really. It seemed to over complicate the whole thing
+\item Maybe, if some improvements were made.
+\item The Idea is good. Should be a good system once errors have been fixed.
+\end{itemize}
+ 
+\item Do you have any thoughts on how to improve the system?\\
+\begin{itemize}
+\item Tighten up on Presentation. A few careless errors with spelling and layout.
+\item Spell things correctly. A feature that lets you know how long your food will be. A chance o get drinks refills easily. 
+\item Make things clearer and simpler. Too many parts are confusing
+\item Provide more options. Provide some more explanation for things like the kitchen orders. 
+\item Too complex for how little it does 
+\end{itemize} 
+
+\end{enumerate}
+\subsection{Conclusions} 
+\subsubsection{Features} 
+All   but   one   of   the   participants   pointed   out   the   lack   of   features   of   the   system   in   its current   state,   questioning   the   viability   of   such   a   system.   Although   all   who   gave   such feedback   did   think   the   idea   had   potential,   if   only   the   system   had   more   capabilities.\\
+In   this   case   a   repeat   of   the   testing,   featuring   a   prototype   containing   all   the   must have   requirements,   will   assist   us   in   coming   to   a   conclusion   on   the   quality   of   our system.   This   initial   test   has   shown   that   while   we   have   some   promising   ideas,   we need   more   if   we   are   to   create   a   complete   and   successful   system.\\
+\subsubsection{Navigation}
+
+Both   the   wait   staff   app   and   the   customer   feedback   display   were   found   to   be   very quick   and   simple   to   browse   by   all   participants,   but   they   all   had   struggles   with navigating   the   kitchen   display.   The   confusion   stemmed   from   not   being   able   to   tell what   was   and   was   not   a   button.   The   assortment   of   bright   colours   with   no explanation   also   proved   to   be   misleading.   Overall   the   layout   proved   to   be   a   mess   of colours   and   squashed   together   tables.\\
+The   layout   proved   to   be   clear   for   two   thirds   of   the   system   and   should   provide   a suitable   framework   to   build   upon   from   here.   The   kitchen   display   will   absolutely need   to   be   overhauled   for   future   work.   In   its   current   state   it   is   disastrous   and borderline   unusable.   Without   significant   change   it   could   become   the   achilles   heel   of the   project.\\
+\subsubsection{Visuals} 
+The   main   positive   that   was   repeated   about   the   look   of   the   system   was   the   lack   of clutter   on   screen.   Another   negative   point   that   was   shared   by   multiple   participant was   that   colours   were   not   used   very   well,   with   a   lack   of   colour   and   life   in   some sections,   and   the   overdone   and   unhelpful   use   of   colours   in   others   getting   in   the way   of   functionality.   The   kitchen   display   again   came   in   for   heavy   criticism   in   this aspect.   The   wait   staff   app   had   mixed   feedback.   The   participants   liked   the   clarity   of all   objects   but   found   it   very   bare   looking,   due   to   lack   of   options,   colours,   and images.\\
+The   feedback   from   the   participants   has   shown   that   there   is   improvement   to   be made   to   make   the   system   much   more   visually   appealing.   There   is   a   balance   that needs   to   be   met   however,   as   shown   by   the   contrasting   feedback   on   the   separate parts   of   the   system.   Steps   must   be   taken   to   make   the   system   look   more professional   and   this   will   take   more   than   a   splash   of   colour   here   and   there.\\
+
+\section{Mock-Ups}
+These interfaces are meant for print outs only. There’s not much interaction using proto.io. The explanation of screens given below.\\
+\subsection{Customer Interface} 
+Customer places order by mentioning their order reference number in the text box and sends the request for the order, they can view their order and then call for the waiter who will place the order.\\
+\subsection{Waiter Interface} 
+1. Table Status [WScreen1]	\\
+Red: Empty\\
+Blue: Table order received when they clicked ‘call waiter’\\
+Yellow: ‘Edit Order’ request from the table\\
+Green: Table served\\
+2.	Taking orders [WScreen 2]:
+a.	Click table 2: See their order summary, confirm to place order.
+i.	Confirming order: Click ‘Place order’ that leads to ‘Pay’ and execute payments. Turns the table 2 button green.
+b.	Click table 3:
+i.	Editing order: click ‘Edit order’ that leads to ‘menu’. Tick/Untick options and press ‘Check out’. Leads to order summary and then waiter confirms it and places order leading to steps mentioned in part a(i).
+[Menus in pdf files]
+c.	Payment: Can be done in cash or by card. With card they can swipe it and the waiter can print receipts for the customer \\
+
+\subsection{Kitchen Interface} 
+One screen with Order Status and 2-4 Screens with Order details. I tried keeping it very simple like the orders that have been served they are not visible anymore so as to keep minimum confusions in a busy environment.
+List of colour codes:
+1.	Nothing ordered: white
+2.	canceled order/empty tables: red
+3.	Getting prepared: yellow
+4.	Order edit: orange
+5.	Order sent/table served: blue and sky blue
+6.	Table being served: grey
+\\
+
+\section{Mock-up Design}
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.65]{Figures/WaitStaffApp.png}
+\caption{Design for the Waiting component}
+\end{sidewaysfigure}
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.65]{Figures/KitchenDisplay.png}
+\caption{Design for the Kitchen component}
+\end{sidewaysfigure}
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.5]{Figures/Customer1.png}
+\caption{Design for Customer component - First Screen}
+\end{sidewaysfigure}
+\begin{sidewaysfigure}
+\centering
+\includegraphics[scale=0.5]{Figures/Customer2.png}
+\caption{Design for Customer component - Second Screen}
+\end{sidewaysfigure}
+
+%TODO Consent Form and Questionnaire Forms
+\printbibliography
+
+\chapter{Appendices}
+
+\end{document}
