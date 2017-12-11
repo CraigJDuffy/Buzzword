@@ -1,0 +1,125 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{minted} % Look at the pretty colours, and indenting, and wrapping...
+\AtBeginEnvironment{minted}{
+  \renewcommand{\fcolorbox}[4][]{#4}} % prevents red error box appearing for parsing errors
+
+\begin{document}
+\title{Component Intercommunication JSON Specification}
+\author{Tommy Lamb}
+
+\maketitle
+
+\tableofcontents
+\pagebreak
+
+\section{Menu}
+
+\begin{itemize}
+\item The Menu object primarily consists of a tree of two other objects: Menu Items and Menu Sections %TODO link
+
+\item MenuID is the globally unique identifier for this menu object
+
+\item DisplayName is the string to be used if representing the object to a user
+
+\item Sections is a list of the top-level MenuSection objects that comprises this menu object. Examples may include MenuSection objects representing Starters, Mains, Deserts, or Drinks.
+\end{itemize}
+
+\begin{minted}{json}
+Menu : {
+	"MenuID" : int,
+	"DisplayName" : string,
+	"Sections" : [MenuSection, MenuSection, ...]
+}
+\end{minted}
+
+
+\subsection{Menu Item}
+
+\begin{itemize}
+\item Represents any single 'thing' that can be ordered by a customer.
+\item The ItemID is a globablly unique identifier for the specific item.
+\item ParentSectionID is the globally unique identifier for the menu section under which this item is listed.
+\item DisplayName is the string to be used if representing the object to a user
+\item Description is a textual description of the object, eg \textit{Decadent chocolate Bombe glacée drizzled with toffee sauce and served with black forest fruit compote.}
+\item Price is the decimal value representing the price of the item to the customer ordering.
+\end{itemize}
+
+\begin{minted}{json}
+MenuItem : {
+	"ItemID" : int,
+	"ParentSectionID" : int,
+	"DisplayName" : string,
+	"Description" : string,
+	"Price" : decimal
+}
+\end{minted}
+
+
+\subsection{Menu Section}
+
+\begin{itemize}
+\item Represents a section of the menu, which may contain either a number of subsections, or a number of menu items.
+\item ParentSectionID is the globally unique identifier for the menu section under which this section is listed.
+\item ParentSectionID may be null if the section is a top-level element. That is, child only to the Menu object.
+\item GroupColour is a string containing a colour hex code, eg "\#FFFFFF"
+\item HasItems represents whether the section has items (true) or subsections (false).
+\item Behaviour where both Items and Subsections are not null is as yet undefined. 
+\end{itemize}
+
+\begin{minted}{json}
+MenuSection : {
+	"SectionID" : int,
+	"ParentSectionID" : int,
+	"DisplayName" : string,
+	"GroupColour" : string,
+	"HasItems" : Boolean,
+	"Items" : [MenuItem, MenuItem, ...],
+	"Subsections" : [MenuSection, MenuSection, ...]
+}
+\end{minted}
+
+
+
+\section{Order}
+
+\begin{itemize}
+\item Represents an order as placed by a customer (by any means).
+\item OrderNumber is a number that can be used to geographically locate the customer and/or to group orders entered separately. For example, a table number.\linebreak
+For grouping separate orders, this allows orders to be placed separately from a group of people, but have those orders conceptually grouped in the system to allow better customer service (eg have all orders prepared at the same time).
+\item Items is the list of OrderItem objects that this order consists of.
+\item ETA is either the string HH:MM representing the estimated time of completion for the order, or null if no such estimate exists.
+\end{itemize}
+
+\begin{minted}{json}
+Order : {
+	"OrderNumber" : int,
+	"OrderName" : string,
+	"ETA" :  string | null,
+	"Items" : [OrderItem, OrderItem, ...],
+}
+\end{minted}
+
+\subsection{Order Item}
+
+\begin{itemize}
+\item Represents a single type of MenuItem ordered by a customer.
+\item Amount is the non-zero integer representing how many of the MenuItem the customer has ordered.
+\item Request is a potentially empty string which represents any specific requests or choices made by the customer (as under F-UR-1.4 and related Non-Functional requirements)
+\item MenuItem is the JSON object specified above representing the thing being ordered.
+\item ETA is either the string HH:MM representing the estimated time of completion for this item, or null if no such estimate exists.
+\item The Modified flag must be specified if the Order object is being used in the context of updating the details of an order.
+\end{itemize}
+
+\begin{minted}{json}
+OrderItem : {
+	"Amount" : int,
+	"Request" : string,
+	"MenuItem" : MenuItem,
+	"ETA" : string | null,
+	["Modified" : Bool]
+}
+\end{minted}
+\end{document}
