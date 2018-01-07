@@ -6,6 +6,14 @@
 \AtBeginEnvironment{minted}{
   \renewcommand{\fcolorbox}[4][]{#4}} % prevents red error box appearing for parsing errors
 
+\usepackage{hyperref}
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Subsection} % Reassigning the default names to have capitals.
+
+%The command gives hyperlinked referencings in the form Section #: SectionTitle
+\newcommand{\gref}[1]{\hyperref[#1]{\autoref*{#1}: \nameref{#1}}} % Good referencing = gref
+
+
 \begin{document}
 \title{Component Intercommunication JSON Specification}
 \author{Tommy Lamb}
@@ -18,7 +26,7 @@
 \section{Menu}
 
 \begin{itemize}
-\item The Menu object primarily consists of a tree of two other objects: Menu Items and Menu Sections %TODO link
+\item The Menu object primarily consists of a tree of two other objects: \nameref{subsec:MenuItem} and \nameref{subsec:MenuSection}
 
 \item MenuID is the globally unique identifier for this menu object
 
@@ -36,7 +44,7 @@ Menu : {
 \end{minted}
 
 
-\subsection{Menu Item}
+\subsection{Menu Item} \label{subsec:MenuItem}
 
 \begin{itemize}
 \item Represents any single 'thing' that can be ordered by a customer.
@@ -58,7 +66,7 @@ MenuItem : {
 \end{minted}
 
 
-\subsection{Menu Section}
+\subsection{Menu Section}\label{subsec:MenuSection}
 
 \begin{itemize}
 \item Represents a section of the menu, which may contain either a number of subsections, or a number of menu items.
@@ -66,7 +74,7 @@ MenuItem : {
 \item ParentSectionID may be null if the section is a top-level element. That is, child only to the Menu object.
 \item GroupColour is a string containing a colour hex code, eg "\#FFFFFF"
 \item HasItems represents whether the section has items (true) or subsections (false).
-\item Behaviour where both Items and Subsections are not null is as yet undefined. 
+\item Behaviour where both Items and Subsections are specified is as yet undefined. 
 \end{itemize}
 
 \begin{minted}{json}
@@ -76,18 +84,18 @@ MenuSection : {
 	"DisplayName" : string,
 	"GroupColour" : string,
 	"HasItems" : Boolean,
-	"Items" : [MenuItem, MenuItem, ...],
-	"Subsections" : [MenuSection, MenuSection, ...]
+	["Items" : [MenuItem, MenuItem, ...]],
+	["Subsections" : [MenuSection, MenuSection, ...]]
 }
 \end{minted}
 
 
-
+\pagebreak
 \section{Order}
 
 \begin{itemize}
 \item Represents an order as placed by a customer (by any means).
-\item OrderNumber is a number that can be used to geographically locate the customer and/or to group orders entered separately. For example, a table number.\linebreak
+\item OrderNumber is a number that can be used to geographically locate the customer and/or to group orders entered separately. For example, a table number.
 For grouping separate orders, this allows orders to be placed separately from a group of people, but have those orders conceptually grouped in the system to allow better customer service (eg have all orders prepared at the same time).
 \item Items is the list of OrderItem objects that this order consists of.
 \item ETA is either the string HH:MM representing the estimated time of completion for the order, or null if no such estimate exists.
@@ -101,7 +109,7 @@ Order : {
 	"Items" : [OrderItem, OrderItem, ...],
 }
 \end{minted}
-
+\pagebreak
 \subsection{Order Item}
 
 \begin{itemize}
@@ -110,7 +118,11 @@ Order : {
 \item Request is a potentially empty string which represents any specific requests or choices made by the customer (as under F-UR-1.4 and related Non-Functional requirements)
 \item MenuItem is the JSON object specified above representing the thing being ordered.
 \item ETA is either the string HH:MM representing the estimated time of completion for this item, or null if no such estimate exists.
-\item The Modified flag must be specified if the Order object is being used in the context of updating the details of an order.
+\item GroupNumber is an integer used to group items within an order. This allows the system to handle starters, mains, and deserts being specified within one order but handled individually (IE served separately).
+\item The Modified flag must be specified for \underline{all} items if the Order object is being used in the context of changing the details of an existing order. The value of the flag is determined as follows:
+\subitem 0 : Item has been added to order
+\subitem 1 : Item details have changed (including amount, request string, and group number)
+\subitem 2 : Item has been removed from the order
 \end{itemize}
 
 \begin{minted}{json}
@@ -119,7 +131,8 @@ OrderItem : {
 	"Request" : string,
 	"MenuItem" : MenuItem,
 	"ETA" : string | null,
-	["Modified" : Bool]
+	"GroupNumber" : int,
+	["Modified" : int]
 }
 \end{minted}
 \end{document}

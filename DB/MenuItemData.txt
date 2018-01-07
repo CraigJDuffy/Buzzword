@@ -1,0 +1,21 @@
+ItemID	SectionID	LongName	ShortName	Description	Price
+1	1	Split Pea Soup	Split Pea Soup	Split pea soup served with crusty baguette and salted butter	2.50
+2	1	Prawn Cocktail	Prawn Cocktail	King prawns served with 5-spice cocktail sauce	3.20
+3	1	Cheese Stuffed Mushrooms	Stuffed Mushrooms	Portobello mushrooms stuffed with a selection of herbs and cheeses	3.20
+20	2	Bottomless Glass	Bottomless Glass	Unlimited refills of Pepsi, 7 Up, Schweppes, and Irn Bru	2.00
+21	2	Malted Milkshake	Milkshake	Choice of Strawberry, Chocolate, Banana, and Butterscotch malted milkshakes	1.80
+41	31	The Highlander	Highlander	Aberdeen Angus burger topped with haggis and whisky sauce. Served with side of home-style chips and salad (with dressing)	11.80
+42	31	The Royal Balmoral	Balmoral	Venison steak with Bleu cheese and crispy shallots. Served with side of home-style chips, salad (with dressing), and cranberry sauce	14.75
+43	31	The Americano	Americano	Two quarter pounders accompanied by cheese, grilled onion, pickles, tomato, lettuce topped with choice of relish or mustard. Served with fries	14.75
+44	32	Jalfrezi	Jalfrezi	A hot, rich curry made with green chillies, peppers, onion and tomatoes. Served with pilau rice, naan, and poppadom	12.00
+45	32	Korma	Korma	A mild but flavorful dish made with ground almonds, coconut and thick cream. Served with pilau rice, naan, and poppadom	12.00
+46	32	Tikka Masala	Tikka Malsala	Rich and creamy sauce with aromatic chicken pieces. Served with pilau rice, naan, and poppadom	12.00
+47	33	Beerbattered Cod and Chips	Fish and Chips	Fresh beer-battered north sea cod on a bed of chunky chips, served with side of tartare sauce	8.50
+48	33	Beef Wellington	Beef Wellington	Tenderloin beef coated in pâté de foie gras and duxelles, baked in puff pastry. Accompanied by rich gravy and roast potatoes	13.10
+81	4	Bombe glacée	Bombe glacée	Decadent chocolate Bombe glacée drizzled with toffee sauce and served with black forest fruit compote	3.60
+82	4	New York Cheesecake	Cheesecake	Rich, dense, and creamy cheesecake topped with a red berry and vanilla glaze	2.40
+83	4	Banoffee Pie	Banoffee Pie	Hot banoffee pie with a buttery biscuit base complimented by choice of ice cream, cream, or custard.	3.60
+84	4	Banana Split	Banana Split	Neopolitan ice cream sandwiched between two bananas topped with crushed nuts and whipped cream drizzled in sauce complete with Maraschino cherry	3.60
+85	4	Apple, Rhubarb, and Plum Crumble	Crumble	Traditional crumble with Apple, Rhubarb, and Plum filling. Flanked by choice of ice cream, cream, or custard.	3.60
+86	4	Devil's food cake	Devil's food cake	Rich chocolate sponge with dark chocolate fudge frosting	2.40
+87	4	Cheese board	Cheese board	Various crackers with cheese selection including Y Fenni, Duddleswell, Red Windsor, and Keltic Gold	2.40
