@@ -1,0 +1,6 @@
+OrderNumber	OrderName	ItemID	Amount	Details	GroupNumber
+12	Pond	2	2		1
+12	Pond	42	1	No salad dressing	2
+12	Pond	48	1		2
+12	Pond	20	1	No ice	0
+12	Pond	20	1		0
