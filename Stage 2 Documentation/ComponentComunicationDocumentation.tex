@@ -3,19 +3,23 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage{minted} % Look at the pretty colours, and indenting, and wrapping...
+\setminted{autogobble, breakautoindent, breaklines}
 \AtBeginEnvironment{minted}{
   \renewcommand{\fcolorbox}[4][]{#4}} % prevents red error box appearing for parsing errors
 
-\usepackage{hyperref}
+\usepackage[colorlinks=true,urlcolor=magenta, linkcolor=red]{hyperref} %Gabbay'fy the URLs (and make them colored text rather than those stupid boxes)
+
 \def\sectionautorefname{Section}
 \def\subsectionautorefname{Subsection} % Reassigning the default names to have capitals.
 
 %The command gives hyperlinked referencings in the form Section #: SectionTitle
 \newcommand{\gref}[1]{\hyperref[#1]{\autoref*{#1}: \nameref{#1}}} % Good referencing = gref
 
+\usepackage{tabulary} %used for tables.
+\usepackage{booktabs} %Used for nicer table formatting eg midrule
 
 \begin{document}
-\title{Component Intercommunication JSON Specification}
+\title{Component Intercommunication Specification}
 \author{Tommy Lamb}
 
 \maketitle
@@ -23,10 +27,66 @@
 \tableofcontents
 \pagebreak
 
-\section{Menu}
+
+\section{Server API}
+
+\subsection{General Comments}
+
+The server scripts follow standard \href{https://en.wikipedia.org/wiki/List_of_HTTP_status_codes}{HTTP status codes}. In the case of a bad request (eg missing arguments) it will return status code 400. Where the server encounters an error, 500 is returned. These include errors in retrieving data from the database, which \textit{may} be due to invalid argument values being supplied.
+
+As yet, the server does not check how many results are returned from the database. This means it may return invalid, empty JSON objects where the supplied arguments don't correspond to a database entry. Where more than one result is returned by the database, no guarantees are made as to which result is ultimately returned.
+
+In accessing the server scripts, it is necessary that the requesting code also be running on the MACS departmental server. In practice this means the various components can only be tested on the server, rather than on local machines. Copying the files to another PHP-compatible server instance may negate this requirement. Failing to do so will generate a JavaScript error on the browser console which mentions the \href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin}{Access-Control-Allow-Origin} response header. It may be possible to remove this requirement; investigation ongoing.
+
+\paragraph{Example Request}
+\begin{minted}{javascript}
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200){
+		console.log(this.responseText);
+	} else if (this.readyState==4 && (this.status==500||this.status==400)){
+		//Error Handling here
+	}
+};
+	xhttp.open("POST", "GetCustomerOrder.php" , true);
+	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhttp.send("OrderName=Pond&OrderNumber=12");
+\end{minted}
+
+\subsection{Customer Component}
+
+\subsubsection{GetCustomerOrder.php}
+
+\begin{tabulary}{\textwidth}{LL}
+Request Type: & POST\\
+Argument List: & OrderName\\
+&OrderNumber\\
+Returns: & JSON: \hyperref[subsec:Order]{Order object}\\
+URL: & \\
+\multicolumn{2}{c}{\verb|www2.macs.hw.ac.uk/~til1/ThirdYear/GroupProject/Customer/GetCustomerOrder.php|}
+\\
+\end{tabulary}
+
+
+\subsection{Waiting Component}
+
+\subsubsection{GetMenu.php}
+\begin{tabulary}{\textwidth}{LL}
+Request Type: & POST\\
+Argument List: & MenuID\\
+Returns: & JSON: \hyperref[subsec:Menu]{Menu object}\\
+URL: & \\
+\multicolumn{2}{c}{\verb|www2.macs.hw.ac.uk/~til1/ThirdYear/GroupProject/Waiting/GetMenu.php|}
+\\
+\end{tabulary}
+
+
+\section{JSON Specification}
+
+\subsection{Menu}\label{subsec:Menu}
 
 \begin{itemize}
-\item The Menu object primarily consists of a tree of two other objects: \nameref{subsec:MenuItem} and \nameref{subsec:MenuSection}
+\item The Menu object primarily consists of a tree of two other objects: \nameref{subsubsec:MenuItem} and \nameref{subsubsec:MenuSection}
 
 \item MenuID is the globally unique identifier for this menu object
 
@@ -44,7 +104,7 @@ Menu : {
 \end{minted}
 
 
-\subsection{Menu Item} \label{subsec:MenuItem}
+\subsubsection{Menu Item} \label{subsubsec:MenuItem}
 
 \begin{itemize}
 \item Represents any single 'thing' that can be ordered by a customer.
@@ -66,7 +126,7 @@ MenuItem : {
 \end{minted}
 
 
-\subsection{Menu Section}\label{subsec:MenuSection}
+\subsubsection{Menu Section}\label{subsubsec:MenuSection}
 
 \begin{itemize}
 \item Represents a section of the menu, which may contain either a number of subsections, or a number of menu items.
@@ -91,7 +151,7 @@ MenuSection : {
 
 
 \pagebreak
-\section{Order}
+\subsection{Order}\label{subsec:Order}
 
 \begin{itemize}
 \item Represents an order as placed by a customer (by any means).
@@ -110,7 +170,7 @@ Order : {
 }
 \end{minted}
 \pagebreak
-\subsection{Order Item}
+\subsubsection{Order Item}\label{subsubsec:OrderItem}
 
 \begin{itemize}
 \item Represents a single type of MenuItem ordered by a customer.
