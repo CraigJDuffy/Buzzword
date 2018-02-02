@@ -181,8 +181,11 @@ Order : {
 \item GroupNumber is an integer used to group items within an order. This allows the system to handle starters, mains, and deserts being specified within one order but handled individually (IE served separately).
 \item The Modified flag must be specified for \underline{all} items if the Order object is being used in the context of changing the details of an existing order. The value of the flag is determined as follows:
 \subitem 0 : Item has been added to order
-\subitem 1 : Item details have changed (including amount, request string, and group number)
-\subitem 2 : Item has been removed from the order
+\subitem 1 : Item details have changed (one or more of: Amount, Request, GroupNumber)
+\subitem 2 : Item ETA has been changed (including to/from null)
+\subitem 3 : Item has been removed from the order
+
+When changing an order, the \textit{MenuItem} field must remain unchanged within the \textit{OrderItem} object. To change an item in the order, the original \textit{OrderItem} object should be included with the \textit{Modified} flag set to 2 (removed), and the new OrderItem object listed with \textit{Modified} flag set to 0 (added).
 \end{itemize}
 
 \begin{minted}{json}
