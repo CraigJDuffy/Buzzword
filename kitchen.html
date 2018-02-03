@@ -1,0 +1,68 @@
+<html>
+<title> Kitchen Component </title>
+<head>Orders Appear Here:</head>
+<br><br>
+<body>
+<style>
+	table, th, td {
+		border: 1px solid black;
+		border-collapse: collapse;
+		padding: 15px;
+	}
+	menuObject {
+		float: left
+	}
+</style>
+<div id = "menuObject">	
+	<table id = "menuItems" style = "width:20%">
+		<tr>
+			<table style = "width:20%">
+				<tr>
+					<th>Name and Number</th>
+				</tr>
+				<tr>
+					<td>Name: Pond <br> Number: 12</td>
+				</tr>
+			</table>
+		</tr>
+		<tr>
+			<table style = "width:20%">
+				<tr>
+					<th>Starter</th>
+				</tr>	
+				<tr>
+					<td> 2 : Prawn Cocktail </td>
+				</tr>
+			</table>
+		</tr>
+		<tr>
+			<table style = "width:20%">
+				<tr>
+					<th>Mains</th>
+				</tr>	
+				<tr>
+					<td> 42 : Balmoral </td>
+				</tr>
+			</table>
+		</tr>
+		<tr>
+			<table style = "width:20%">
+				<tr>
+					<th>Dessert</th>
+				</tr>	
+				<tr>
+					<td> 85 : Banana Split	 </td>
+				</tr>
+			</table>
+		</tr>
+	</table>
+<br><br>
+<button onclick="insertTable()">Insert example table (not functional)</button>
+</body>
+<script>
+	function insertTable() {
+	var table = document.getElementById("menuItems");
+	
+	}
+</script>
+</html>

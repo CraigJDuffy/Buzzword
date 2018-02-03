@@ -1,0 +1,4 @@
+TODO:
+- Insert tables successfully
+- Add tables left to right
+- Communicate with DB
