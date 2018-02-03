@@ -6,13 +6,31 @@
 <link rel='stylesheet'  href="../css/normalize.css">
 <link rel="stylesheet" type="text/css" href="../css/checkOrder.css">
 <body>
-<h5>This page allows you to check the status of any current orders. <br><br> You will have been given an order number consisting of your Surname or other memorable word, and table number. <br> For example, 'John Smith at Table 13' would become 'Smith13' </h5>
-  <br>
-<form action="/checkOrder.php">
-Enter Your Order Number in the Box:<br><br>
-  <input type="text" name="orderNumber" value=""/>
-  <br><br>
-  <input type="submit" value="Check Status of Order">
-</form>
+<div id="info">
+  <h5>This page allows you to check the status of any current orders.
+    <br><br>
+    You will have selected a 'keyword' most likely based on your name.
+    Enter this in the keyword section, and your table number in the table number section.
+    <br><br>
+    For example, 'John Smith at Table 13' would become 'Smith' in box 1, and '13' in box 2.
+   </h5>
+    <br>
+</div>
+<div id="checkOrder">
+  <form action="/checkOrder.php">
+    Enter Your Keyword in the Box:
+    <br><br>
+    <input type="text" name="orderName" value="" placeholder="Smith"/>
+    <br><br>
+    Enter your Table Number in the Box:
+    <br><br>
+    <input type='text' name = "tableNumber" value ="" placeholder="13"/>
+    <br><br>
+    <input type="submit" value="Check Status of Order">
+    </form>
+</div>
+<div id="returnOrder">
+  <h2> </h2>
+</div>
 </body>
 </html>
