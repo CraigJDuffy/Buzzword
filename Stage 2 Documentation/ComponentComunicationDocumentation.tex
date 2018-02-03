@@ -33,12 +33,16 @@
 \subsection{General Comments}
 
 The server scripts follow standard \href{https://en.wikipedia.org/wiki/List_of_HTTP_status_codes}{HTTP status codes}. In the case of a bad request (eg missing arguments) it will return status code 400. Where the server encounters an error, 500 is returned. These include errors in retrieving data from the database, which \textit{may} be due to invalid argument values being supplied.
+Certain errors (of either type) will return an error message in the response text. More error reporting will be added in future. This should be used for debugging purposes only, and not relied upon for the final product.
 
 As yet, the server does not check how many results are returned from the database. This means it may return invalid, empty JSON objects where the supplied arguments don't correspond to a database entry. Where more than one result is returned by the database, no guarantees are made as to which result is ultimately returned.
 
-In accessing the server scripts, it is necessary that the requesting code also be running on the MACS departmental server. In practice this means the various components can only be tested on the server, rather than on local machines. Copying the files to another PHP-compatible server instance may negate this requirement. Failing to do so will generate a JavaScript error on the browser console which mentions the \href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin}{Access-Control-Allow-Origin} response header. It may be possible to remove this requirement; investigation ongoing.
+In accessing the server scripts, it is necessary that the requesting code also be running on the MACS departmental server. In practice this means the various components can only be tested on the server, rather than on local machines. Copying all files to another PHP-compatible server instance may negate this requirement. Failing to do so will generate a JavaScript error on the browser console which mentions the \href{https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin}{Access-Control-Allow-Origin} response header. It may be possible to remove this requirement; investigation ongoing.
 
-\paragraph{Example Request}
+When updating an \hyperref[subsec:Order]{Order}, it is not necessary to list all \hyperref[subsubsec:OrderItem]{Items} in the order, only those which have been modified. Indeed the JSON specification makes no allowance for unmodified items to be listed alongside modified ones.
+
+
+\subsection{Example Request}
 \begin{minted}{javascript}
 var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
@@ -53,12 +57,20 @@ xhttp.onreadystatechange = function() {
 	xhttp.send("OrderName=Pond&OrderNumber=12");
 \end{minted}
 
+For "application/json;charset=UTF-8" encoded data, use the following:
+\begin{minted}{javascript}
+	xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+	xhttp.send(JSON.stringify(Object));
+\end{minted}
+Where Object is the JavaScript object representing the order.
+
 \subsection{Customer Component}
 
 \subsubsection{GetCustomerOrder.php}
 
 \begin{tabulary}{\textwidth}{LL}
 Request Type: & POST\\
+Encoding Type: & application/x-www-form-urlencoded\\
 Argument List: & OrderName\\
 &OrderNumber\\
 Returns: & JSON: \hyperref[subsec:Order]{Order object}\\
@@ -73,12 +85,36 @@ URL: & \\
 \subsubsection{GetMenu.php}
 \begin{tabulary}{\textwidth}{LL}
 Request Type: & POST\\
+Encoding Type: & application/x-www-form-urlencoded\\
 Argument List: & MenuID\\
 Returns: & JSON: \hyperref[subsec:Menu]{Menu object}\\
 URL: & \\
 \multicolumn{2}{c}{\verb|www2.macs.hw.ac.uk/~til1/ThirdYear/GroupProject/Waiting/GetMenu.php|}
 \\
 \end{tabulary}
+
+\subsubsection{AddCustomerOrder.php}
+\begin{tabulary}{\textwidth}{LL}
+Request Type: & POST\\
+Encoding Type: & application/json;charset=UTF-8\\
+Argument List: & \hyperref[subsec:Order]{JSON Order string}\\
+Returns: & nothing\\
+URL: & \\
+\multicolumn{2}{c}{\verb|www2.macs.hw.ac.uk/~til1/ThirdYear/GroupProject/Waiting/AddCustomerOrder.php|}
+\\
+\end{tabulary}
+
+\subsubsection{UpdateCustomerOrder.php}
+\begin{tabulary}{\textwidth}{LL}
+Request Type: & POST\\
+Encoding Type: & application/json;charset=UTF-8\\
+Argument List: & \hyperref[subsec:Order]{JSON Order string} with \textit{Modified} flags included \\
+Returns: & nothing\\
+URL: & \\
+\multicolumn{2}{c}{\verb|www2.macs.hw.ac.uk/~til1/ThirdYear/GroupProject/Waiting/UpdateCustomerOrder.php|}
+\\
+\end{tabulary}
+
 
 
 \section{JSON Specification}
@@ -181,11 +217,14 @@ Order : {
 \item GroupNumber is an integer used to group items within an order. This allows the system to handle starters, mains, and deserts being specified within one order but handled individually (IE served separately).
 \item The Modified flag must be specified for \underline{all} items if the Order object is being used in the context of changing the details of an existing order. The value of the flag is determined as follows:
 \subitem 0 : Item has been added to order
-\subitem 1 : Item details have changed (one or more of: Amount, Request, GroupNumber)
+\subitem 1 : Item has been removed from the order
 \subitem 2 : Item ETA has been changed (including to/from null)
-\subitem 3 : Item has been removed from the order
+\subitem 3 : Item details have changed (one or both of: Amount, GroupNumber)
 
-When changing an order, the \textit{MenuItem} field must remain unchanged within the \textit{OrderItem} object. To change an item in the order, the original \textit{OrderItem} object should be included with the \textit{Modified} flag set to 2 (removed), and the new OrderItem object listed with \textit{Modified} flag set to 0 (added).
+When changing an order, the \textit{MenuItem} field must remain unchanged within the \textit{OrderItem} object. To change an item in the order, the original \textit{OrderItem} object should be included with the \textit{Modified} flag set to 1 (removed), and the new OrderItem object listed with \textit{Modified} flag set to 0 (added).
+
+A similar procedure must be followed for modifying the \textit{request} field. A new \textit{OrderItem} object with the new request should be used with the \textit{Modified} flag set to 0 (added). The original \textit{OrderItem} should be included with either the \textit{Modified} flag set to 1 (removed), or set to 3 (details changed) with the \textit{Amount} field reduced by the appropriate amount. The latter case is when two or more of the same menu items have been ordered, but only some of them have their request amended: for example, if an order with three identical beverages with no request is updated to have 2 with no request and 1 with the request "no ice".
+
 \end{itemize}
 
 \begin{minted}{json}
