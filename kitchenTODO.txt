@@ -1,3 +1,5 @@
 TODO:
+- Add option to provide estimate
+- Add option to mark as complete
 - Communicate with DB
 - Insert tables successfully from DB
