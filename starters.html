@@ -1,0 +1,53 @@
+<html>
+<head>
+<link rel="stylesheet" href="menu.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>
+
+<script src="cart.js"></script>
+    
+<script>
+
+    $(function() {
+
+
+   var menu = [];
+
+   $.getJSON('menu.json', function(data) {
+       const section = data.Sections[0];
+       $.each(section.Items, function(i, f) {
+       // $.each(data.Items, function(i, f) {
+          var tblRow = "<tr>" + "<td>" + f.ItemID + "</td>" +
+           "<td>" + f.DisplayName + "</td>" + "<td>" + f.Description + "</td>" + "<td>" + f.Price + "</td>" + "<td><button onClick='setitem(f)'>Order</button></td>" + "</tr>"
+           $(tblRow).appendTo("#userdata tbody");
+        });
+     //  });
+   });
+
+});
+</script>
+</head>
+
+<body>
+
+<div class="wrapper">
+<div class="profile">
+    <div class="btn-group" style="width:100%">
+    <a href="starters.html"><button style="width:25%">Starters</button></a>
+    <a href="mains.html"><button style="width:25%">Mains</button></a>
+    <a href="desserts.html"><button style="width:25%">Desserts</button></a>
+    <a href="drinks.html"><button style="width:25%">Drinks</button></a>
+    </div>
+   <table id= "userdata" border="2">
+  <thead>
+            <th>Item ID</th>
+            <th>Display Name</th>
+            <th>Description</th>
+            <th>Price</th>
+        </thead>
+      <tbody>
+
+       </tbody>
+   </table>
+    <a href="checkout.html"><button class="checkoutbtn" onClick="getcookie()">Checkout</button></a>
+</div>
+</div>
