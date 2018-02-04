@@ -5,6 +5,9 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel='stylesheet'  href="../css/normalize.css">
 <link rel="stylesheet" type="text/css" href="../css/checkOrder.css">
+<head>
+  <script type="text/javascript" src="../js/formBeautify.js"></script>
+  <script type="text/javascript" src="../js/getOrder.js"></script>
 <body>
 <div id="info">
   <h5>This page allows you to check the status of any current orders.
@@ -20,7 +23,7 @@
   <form action="/checkOrder.php">
     Enter Your Keyword in the Box:
     <br><br>
-    <input type="text" name="orderName" id="orderName" value="" placeholder="Smith"/>
+    <input type="text" name="orderName" id="orderName" value="" placeholder="Smith" onfocus="clearOrderName()"/>
     <br><br>
     Enter your Table Number in the Box:
     <br><br>
