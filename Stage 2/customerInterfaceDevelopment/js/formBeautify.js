@@ -1,3 +1,6 @@
 function clearOrderName(){
-document.getElementByID("orderName") = "";
+document.getElementById('orderName') = "";
+}
+function clearTableNo(){
+document.getElementById('tableNo') = "";
 }

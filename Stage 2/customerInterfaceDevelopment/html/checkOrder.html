@@ -1,39 +1,38 @@
+<!DOCTYPE html>
 <html>
-<title> Check Order Status </title>
+<head>
+<title>Check Order Status</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel='stylesheet'  href="../css/normalize.css">
+<link rel='stylesheet' href="../css/normalize.css">
 <link rel="stylesheet" type="text/css" href="../css/checkOrder.css">
-<head>
-  <script type="text/javascript" src="../js/formBeautify.js"></script>
-  <script type="text/javascript" src="../js/getOrder.js"></script>
+<script
+  src="../js/formBeautify.js">
+</script>
+<script
+  src="../js/getOrder.js">
+</script>
+</head>
 <body>
 <div id="info">
-  <h5>This page allows you to check the status of any current orders.
-    <br><br>
-    You will have selected a 'keyword' most likely based on your name.
-    Enter this in the keyword section, and your table number in the table number section.
-    <br><br>
-    For example, 'John Smith at Table 13' would become 'Smith' in box 1, and '13' in box 2.
-   </h5>
-    <br>
-</div>
+<h5>This page allows you to check the status of any current orders.<br>
+<br>
+You will have selected a 'keyword' most likely based on your name. Enter this in the keyword section, and your table number in the table number section.<br>
+<br>
+For example, 'John Smith at Table 13' would become 'Smith' in box 1, and '13' in box 2.</h5>
+<br></div>
 <div id="checkOrder">
-  <form action="/checkOrder.php">
-    Enter Your Keyword in the Box:
-    <br><br>
-    <input type="text" name="orderName" id="orderName" value="" placeholder="Smith" onfocus="clearOrderName()"/>
-    <br><br>
-    Enter your Table Number in the Box:
-    <br><br>
-    <input type='text' name = "tableNumber" id="tableNo" value ="" placeholder="13"/>
-    <br><br>
-    <input type="submit" value="Check Status of Order">
-    </form>
+<form onsubmit="return getOrder();">Enter Your Keyword in the Box:<br>
+<br>
+<input type="text" name="orderName" id="orderName" value="" placeholder="Smith"><br>
+<br>
+Enter your Table Number in the Box:<br>
+<br>
+<input type='text' name="tableNumber" id="tableNo" value="" placeholder="13" ><br>
+<br>
+<input type="submit" value="Check Status of Order"></form>
 </div>
-<div id="returnOrder">
-  <h2> </h2>
-</div>
+<div id="returnOrder"></div>
 </body>
 </html>
