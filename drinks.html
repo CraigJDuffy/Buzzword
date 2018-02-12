@@ -3,20 +3,27 @@
 <link rel="stylesheet" href="menu.css">
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"> </script>
 
+<script src="cart.js"></script>
+    
 <script>
 
     $(function() {
 
 
    var menu = [];
-
+ var it = [];
+    var pr = [];
+    var i = 0;  
    $.getJSON('menu.json', function(data) {
        const section = data.Sections[1];
        $.each(section.Items, function(i, f) {
+           it[i] = f.ItemID;
+           pr[i] = f.Price;
        // $.each(data.Items, function(i, f) {
           var tblRow = "<tr>" + "<td>" + f.ItemID + "</td>" +
-           "<td>" + f.DisplayName + "</td>" + "<td>" + f.Description + "</td>" + "<td>" + f.Price + "</td>" + "<td><button>Order</button></td>" + "</tr>"
+           "<td>" + f.DisplayName + "</td>" + "<td>" + f.Description + "</td>" + "<td>£" + parseFloat(f.Price).toFixed(2) + "</td>" + "<td><button onClick=Loc_additem(" + it[i] + "," + pr[i] + ")>Order</button></td>" + "</tr>"
            $(tblRow).appendTo("#userdata tbody");
+           i++;
         });
      //  });
    });
@@ -46,6 +53,7 @@
 
        </tbody>
    </table>
-<a href="checkout.html"><button class="checkoutbtn">Checkout</button></a>
+    <h3 id="number">No. of Items: 0</h3>
+<a href="checkout.html"><button class="checkoutbtn" onClick="getcookie()">Checkout</button></a>
 </div>
 </div>
