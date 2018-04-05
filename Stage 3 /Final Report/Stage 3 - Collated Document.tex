@@ -6,11 +6,45 @@
 \usepackage{minitoc-hyper} %Used to give contents pages for individual chapters. Mini Tables of Contents.
 \usepackage{graphicx}
 \usepackage[final]{pdfpages}
-
+\usepackage{tabulary}
 \begin{document}
+
+\begin{titlepage}
+	\thispagestyle{empty}
+	{\centering
+		\includegraphics[width=0.5\textwidth]{heriot-watt-logo.png}\par\vspace{1cm}
+	%	{\scshape\LARGE Heriot-Watt University \par}
+		\vspace{1cm}
+		{\LARGE F29SO - Software Engineering\par}
+		{\LARGE Stage 3 - Final Product\par}
+		\vspace{1.5cm}
+	%	{\scshape\Large Coursework\par}
+		\vspace{1.5cm}
+		{\scshape\LARGE\bfseries Final Report for Restaurant Ordering System by Buzzword \par}
+
+		\vspace{3.5cm}
+			\begin{center}
+					April 5\textsuperscript{th} 2018
+			\end{center}
+		\vspace{1cm}
+		\textit{Buzzword (Group 5)}\par
+		\begin{tabulary}{\textwidth}{rcl|rcl}
+			\\ \textsc{Kerr Brydon} & - & H00219387&
+			\textsc{Wai Chong} & - & H00187212\\
+			\textsc{Craig Duffy} & - & H00235298 &
+			\textsc{Tommy Lamb} & - & H00217505 \\
+			\textsc{Alastair Nibloe} & - & H00184083&
+			\textsc{Mamta Sofat} & - & H00236213\\
+			\textsc{Michael Steventon} & - & H00191545&
+			\textsc{Michael Lones} & - & \textsc{Manager} \\
+		\end{tabulary} \\
+	
+	}
+\end{titlepage}
+
+\dominitoc %Initialises the Domain of the MiniTOC
 \tableofcontents
 \pagebreak
-\dominitoc %Initialises the Domain of the MiniTOC
 \chapter{Marketing Analysis and Strategy}
 \pagebreak
 \pagebreak
@@ -125,7 +159,8 @@ The financial group behind this ambitious project is Heriot-Watt University, the
 Category: Organisations and Communities
 \linebreak
 Consulting with the trade union for restaurant and kitchen workers would be beneficial as some workers may be worried that ROSS may be replacing them. To alleviate these fears interacting with the trade union and creating a dialogue would go a long way to ensuring the system is implemented without any major problems or protests from staff.
-
+
+
 \newpage
 \section{The Marketing Mix}
 The marketing mix, or 4 P’s as some call it, was introduced by E. Jerome Mccarthy in 1960. These 4 elements focus on getting the right product in the right place at the right price, no one element is more important than the other and each element is there to support the others. 
@@ -187,6 +222,9 @@ Another way for ROSS to make money is for a lite version of the software to be r
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Final Application Design and Implementation}
+\pagebreak
+\minitoc
+\pagebreak
 \section{System Overview}
 
 The technologies used in the system, for the most part, are the same as were planned in stage 1 of this project. The system was developed and deployed on the Linux-based server available to students within the MACS department, using MySQL as the supporting database and Apache HTTP server to serve static HTML and execute server-side PHP scripts -- both also available within the department. The only change from the original plan was the choice to not use the React framework. We decided to forego any frameworks as the scope and scale of the project was limited enough that scalability posed no issue -- a major advantage of React -- and the ramp-up time for the team would have been prohibitively expensive. Any other advantages were relatively minor, and insufficient to offset the cost in learning the technology. As such all functionality was implemented using purely standard JavaScript, alongside HTML and CSS, with PHP and SQL as server-side technologies.
@@ -217,7 +255,6 @@ No provision is made in the system as currently implemented to allow end-user ma
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\dominitoc %Initialises the Domain of the MiniTOC
 \chapter{Project Evaluation} 
 \pagebreak
 \minitoc
