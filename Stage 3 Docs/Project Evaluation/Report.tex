@@ -5,22 +5,8 @@
 \usepackage[colorlinks=true,urlcolor=magenta, linkcolor=red]{hyperref} %Colours links instead of highlighting with a box, URL's are Magenta
 \usepackage{minitoc-hyper} %Used to give contents pages for individual chapters. Mini Tables of Contents.
 
-%Put "DRAFT" in the background.  Due to Filox
-\usepackage{graphicx} %or \usepackage{graphicx}
-\usepackage{type1cm}
-\usepackage{eso-pic}
-\makeatletter
-\AddToShipoutPicture{ %
-	\setlength{\@tempdimb}{.5\paperwidth}%
-	\setlength{\@tempdimc}{.5\paperheight}%
-	\setlength{\unitlength}{1pt}%
-	\put(\strip@pt\@tempdimb,\strip@pt\@tempdimc){ %
-		\makebox(0,0){\rotatebox{55}{\textcolor[gray]{0.95} %
-				{\fontsize{7cm}{7cm}\selectfont{DRAFT}}}}%
-		% Adjust 7cm to desired font size as necessary
-	} %
-}
-\makeatother
+\usepackage{graphicx}
+
 
 \begin{document}
 \dominitoc %Initialises the Domain of the MiniTOC
@@ -83,20 +69,18 @@ It could be argued that our implementation approach was not unsuccessful with a 
 achieve everything we had planned, and the end product was not of as high quality as we would have liked. The group feels the implementation approach, therefore, was unsuccessful but this was not a result of the planned 
 implementation methodology adopted but rather that it was not adhered to at all.  
 \subsection{"Which languages, tools, and techniques did you use? How suitable were they?"} \label{sec:Implementation - 3}
-%TODO: Tommy
+For this project we used HTML5 and CSS3 for the Front End along with a Linux, Apache, MySQL, PHP (LAMP) server for handling data moving between components. Some PHP and Javascript was used in the Front End but the majority of PHP is used in the backend. While this approach did not afford us some fancy features such as the ability to save the WebApp as an offline application on mobile devices it was more than appropriate for the task at hand and accomplished the functionality. It was determined that we should "stick to what we know" rather than spend time and resources learning a framework/other language which likely would not benefit us much in this situation.
 \pagebreak
 \section{Product} 
 A most of the core functionality required by the specification document has been implemented. A notable omission is the inclusion of the ability for a waiter to amend an existing order; this has cascading consequences where a number of our "Could Have" or "Should Have" requirements were not implemented as these related to the amendment of orders. 
 \subsection{"How many of your requirements did you meet?"}
 The table below references our Stage One - The Bid document and outlines each of the Functional Requirements with indications of the degree to which each of these were implemented.\\
-
-\includegraphics[width=\textwidth]{FR}
-
+\includegraphics[width = \textwidth]{FR.png}
 \subsection{"What is particularly special about your product? Have you included extra features?"}
 The key selling point of our application is the ability to perform the requested functionality without the need for either the customer or the waiter to have/create an account. We felt that account creation would be cumbersome for the user and as such deliberately avoided it. No extra features have been included outside of what was outlined in our original requirements document. 
 \subsection{"How robust is your final system? Are there known bugs or constraints?"}
 
 The resulting system is fairly robust with only one known bug, that being that the server does not check for the correctness of any JSON it returns. This could, in theory, result in unpredictable system behaviour in the future. However, there are a number of constraints with the system but these all relate to the unimplemented functionality discussed previously.
 \subsection{"How usable did your subjects find the final system?"}
-%TODO:Kerr
-\end{document}  
+We ran a usability study on 6 participants to test the usability of our application. The consensus from these participants appeared to be that the application functioned well enough and the information hierarchy was reasonable but the usability of the application could be greatly improved by redesigning, and improving the aesthetics of the application: making things bigger/more readable and easier to follow. For more information on our findings please refer to the "Final Usability Evaluation" chapter of this document.
+   \end{document}  
